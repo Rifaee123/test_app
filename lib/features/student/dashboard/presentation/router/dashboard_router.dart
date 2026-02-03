@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:test_app/core/entities/student.dart';
-import 'package:test_app/features/attendance/presentation/pages/attendance_page.dart';
-import 'package:test_app/features/courses/presentation/pages/courses_page.dart';
-import 'package:test_app/features/marks/presentation/pages/marks_page.dart';
-import 'package:test_app/features/profile/presentation/pages/profile_page.dart';
+import 'package:test_app/features/student/attendance/presentation/pages/attendance_page.dart';
+import 'package:test_app/features/student/courses/presentation/pages/courses_page.dart';
+import 'package:test_app/features/student/marks/presentation/pages/marks_page.dart';
+import 'package:test_app/features/student/profile/presentation/pages/profile_page.dart';
 
 class DashboardRouter {
   static void navigateToAttendance(BuildContext context) {

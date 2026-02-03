@@ -17,6 +17,8 @@ class AuthRepositoryImpl implements AuthRepository {
         semester: '6th Semester',
         attendance: 85.5,
         averageMarks: 78.4,
+        parentName: 'Robert Doe',
+        division: 'Division A',
       );
     }
     return null;

@@ -14,6 +14,8 @@ class _ProfilePageState extends State<ProfilePage> {
   late TextEditingController _nameController;
   late TextEditingController _phoneController;
   late TextEditingController _addressController;
+  late TextEditingController _parentController;
+  late TextEditingController _divisionController;
   bool _isEditing = false;
 
   @override
@@ -22,6 +24,8 @@ class _ProfilePageState extends State<ProfilePage> {
     _nameController = TextEditingController(text: widget.student.name);
     _phoneController = TextEditingController(text: widget.student.phone);
     _addressController = TextEditingController(text: widget.student.address);
+    _parentController = TextEditingController(text: widget.student.parentName);
+    _divisionController = TextEditingController(text: widget.student.division);
   }
 
   @override
@@ -29,6 +33,8 @@ class _ProfilePageState extends State<ProfilePage> {
     _nameController.dispose();
     _phoneController.dispose();
     _addressController.dispose();
+    _parentController.dispose();
+    _divisionController.dispose();
     super.dispose();
   }
 
@@ -60,6 +66,10 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 32),
             _buildField('Full Name', _nameController, _isEditing),
             const SizedBox(height: 16),
+            _buildField('Guardian Name', _parentController, _isEditing),
+            const SizedBox(height: 16),
+            _buildField('Academic Division', _divisionController, _isEditing),
+            const SizedBox(height: 16),
             _buildField('Phone Number', _phoneController, _isEditing),
             const SizedBox(height: 16),
             _buildField(
@@ -74,7 +84,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 label: TestIds.saveProfileBtn,
                 child: ElevatedButton(
                   onPressed: () {
-                    // In real app, call BLoC to update
                     setState(() => _isEditing = false);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
