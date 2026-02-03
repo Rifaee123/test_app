@@ -7,17 +7,21 @@ class Student extends User {
   final String semester;
   final double attendance;
   final double averageMarks;
+  final String parentName;
+  final String division;
 
   const Student({
-    required String id,
-    required String name,
-    required String email,
+    required super.id,
+    required super.name,
+    required super.email,
     this.phone,
     this.address,
     required this.semester,
     required this.attendance,
     required this.averageMarks,
-  }) : super(id: id, name: name, email: email);
+    required this.parentName,
+    required this.division,
+  });
 
   @override
   List<Object?> get props => [
@@ -27,9 +31,17 @@ class Student extends User {
     semester,
     attendance,
     averageMarks,
+    parentName,
+    division,
   ];
 
-  Student copyWith({String? name, String? phone, String? address}) {
+  Student copyWith({
+    String? name,
+    String? phone,
+    String? address,
+    String? parentName,
+    String? division,
+  }) {
     return Student(
       id: id,
       name: name ?? this.name,
@@ -39,6 +51,8 @@ class Student extends User {
       semester: semester,
       attendance: attendance,
       averageMarks: averageMarks,
+      parentName: parentName ?? this.parentName,
+      division: division ?? this.division,
     );
   }
 }
