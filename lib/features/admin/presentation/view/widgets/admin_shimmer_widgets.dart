@@ -23,10 +23,10 @@ class AdminShimmerStatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return AdminShimmerBase(
       child: Container(
-        height: 60.h,
+        height: 55.h,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(6),
+          borderRadius: BorderRadius.circular(10),
         ),
       ),
     );
@@ -40,11 +40,11 @@ class AdminShimmerStudentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return AdminShimmerBase(
       child: Container(
-        margin: EdgeInsets.only(bottom: 4.h),
-        height: 40.h,
+        margin: EdgeInsets.only(bottom: 6.h),
+        height: 48.h,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(6),
+          borderRadius: BorderRadius.circular(10),
         ),
       ),
     );
@@ -60,11 +60,32 @@ class AdminShimmerWelcomeHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(height: 10.h, width: 100.w, color: Colors.white),
-          SizedBox(height: 4.h),
-          Container(height: 15.h, width: 150.w, color: Colors.white),
-          SizedBox(height: 4.h),
-          Container(height: 10.h, width: 120.w, color: Colors.white),
+          Container(
+            height: 8.h,
+            width: 80.w,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          SizedBox(height: 6.h),
+          Container(
+            height: 18.h,
+            width: 160.w,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+          SizedBox(height: 6.h),
+          Container(
+            height: 12.h,
+            width: 120.w,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
         ],
       ),
     );

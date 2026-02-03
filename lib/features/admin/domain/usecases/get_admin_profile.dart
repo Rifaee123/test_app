@@ -3,10 +3,6 @@ import 'package:test_app/features/admin/domain/repositories/admin_repository.dar
 
 class GetAdminProfile {
   final AdminRepository repository;
-
   GetAdminProfile(this.repository);
-
-  Future<Teacher> call() async {
-    return await repository.getAdminProfile();
-  }
+  Future<Teacher> call() => repository.getAdminProfile();
 }

@@ -5,12 +5,14 @@ import 'package:test_app/features/auth/domain/usecases/auth_interactor.dart';
 import 'package:test_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:test_app/features/admin/data/repositories/admin_repository_impl.dart';
 import 'package:test_app/features/admin/domain/repositories/admin_repository.dart';
+import 'package:test_app/features/admin/domain/interactor/admin_interactor.dart';
+import 'package:test_app/features/admin/domain/usecases/add_student.dart';
 import 'package:test_app/features/admin/domain/usecases/get_admin_profile.dart';
 import 'package:test_app/features/admin/domain/usecases/get_students.dart';
-import 'package:test_app/features/admin/domain/usecases/add_student.dart';
 import 'package:test_app/features/admin/domain/usecases/update_student.dart';
 import 'package:test_app/features/admin/domain/usecases/delete_student.dart';
-import 'package:test_app/features/admin/presentation/bloc/admin_bloc.dart';
+import 'package:test_app/features/admin/presentation/presenter/admin_presenter.dart';
+import 'package:test_app/features/admin/presentation/router/admin_router.dart';
 
 final sl = GetIt.instance;
 
@@ -26,9 +28,19 @@ Future<void> initDI() async {
   sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl());
 
   // Features - Admin
-  // Bloc
+  // Presenter
   sl.registerFactory(
-    () => AdminBloc(
+    () => AdminPresenter(
+      profileInteractor: sl<AdminInteractor>(),
+      studentReader: sl<AdminInteractor>(),
+      studentWriter: sl<AdminInteractor>(),
+      router: sl(),
+    ),
+  );
+
+  // Interactor
+  sl.registerLazySingleton<AdminInteractor>(
+    () => AdminInteractorImpl(
       getAdminProfile: sl(),
       getStudents: sl(),
       addStudent: sl(),
@@ -46,4 +58,7 @@ Future<void> initDI() async {
 
   // Repository
   sl.registerLazySingleton<AdminRepository>(() => AdminRepositoryImpl());
+
+  // Router
+  sl.registerLazySingleton<IAdminRouter>(() => AdminRouterImpl());
 }

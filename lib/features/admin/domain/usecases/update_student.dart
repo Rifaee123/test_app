@@ -3,10 +3,6 @@ import 'package:test_app/features/admin/domain/repositories/admin_repository.dar
 
 class UpdateStudent {
   final AdminRepository repository;
-
   UpdateStudent(this.repository);
-
-  Future<void> call(Student student) async {
-    return await repository.updateStudent(student);
-  }
+  Future<void> call(Student student) => repository.updateStudent(student);
 }

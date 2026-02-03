@@ -2,25 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_app/core/di/injection.dart';
 import 'package:test_app/core/entities/student.dart';
-import 'package:test_app/features/admin/presentation/bloc/admin_bloc.dart';
-import 'package:test_app/features/admin/presentation/pages/admin_home_page.dart';
-import 'package:test_app/features/admin/presentation/pages/student_detail_page.dart';
-import 'package:test_app/features/admin/presentation/pages/student_form_page.dart';
+import 'package:test_app/features/admin/presentation/presenter/admin_presenter.dart';
+import 'package:test_app/features/admin/presentation/view/pages/admin_home_page.dart';
+import 'package:test_app/features/admin/presentation/view/pages/student_detail_page.dart';
+import 'package:test_app/features/admin/presentation/view/pages/student_form_page.dart';
 
-class AdminRouter {
-  static void navigateToAdminHome(BuildContext context) {
+abstract class IAdminRouter {
+  void navigateToAdminHome(BuildContext context);
+  void navigateToStudentDetail(BuildContext context, Student student);
+  void navigateToStudentForm(BuildContext context, {Student? student});
+  void pop(BuildContext context);
+}
+
+class AdminRouterImpl implements IAdminRouter {
+  @override
+  void navigateToAdminHome(BuildContext context) {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => BlocProvider(
-          create: (context) => sl<AdminBloc>()..add(LoadAdminDataEvent()),
+          create: (context) => sl<AdminPresenter>()..add(LoadAdminDataEvent()),
           child: const AdminHomePage(),
         ),
       ),
     );
   }
 
-  static void navigateToStudentDetail(BuildContext context, Student student) {
+  @override
+  void navigateToStudentDetail(BuildContext context, Student student) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -29,7 +38,8 @@ class AdminRouter {
     );
   }
 
-  static void navigateToStudentForm(BuildContext context, {Student? student}) {
+  @override
+  void navigateToStudentForm(BuildContext context, {Student? student}) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -38,7 +48,6 @@ class AdminRouter {
     );
   }
 
-  static void pop(BuildContext context) {
-    Navigator.pop(context);
-  }
+  @override
+  void pop(BuildContext context) => Navigator.pop(context);
 }

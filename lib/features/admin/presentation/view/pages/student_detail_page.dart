@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:test_app/core/entities/student.dart';
 import 'package:test_app/core/theme/app_theme.dart';
+import 'package:test_app/features/admin/presentation/view/admin_keys.dart';
 
 class StudentDetailPage extends StatelessWidget {
   final Student student;
@@ -11,15 +12,26 @@ class StudentDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Student Details')),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(20.w),
-        child: Column(
-          children: [
-            _buildHeader(context),
-            SizedBox(height: 24.h),
-            _buildInfoList(context),
-          ],
+      key: AdminKeys.studentDetailView,
+      appBar: AppBar(
+        title: const Text('Student Details'),
+        leading: BackButton(key: AdminKeys.backButton),
+      ),
+      body: Semantics(
+        label: 'Student detailed information scroll view',
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(20.w),
+          child: Column(
+            children: [
+              _buildHeader(context),
+              SizedBox(height: 24.h),
+              Semantics(
+                key: AdminKeys.studentDetailCard,
+                label: 'Student information list',
+                child: _buildInfoList(context),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:test_app/core/entities/student.dart';
-import 'package:test_app/features/admin/presentation/bloc/admin_bloc.dart';
+import 'package:test_app/features/admin/presentation/presenter/admin_presenter.dart';
+import 'package:test_app/features/admin/presentation/view/admin_keys.dart';
 
 class StudentFormPage extends StatefulWidget {
   final Student? student;
@@ -35,6 +36,7 @@ class _StudentFormPageState extends State<StudentFormPage> {
   Widget build(BuildContext context) {
     final isEditing = widget.student != null;
     return Scaffold(
+      key: AdminKeys.studentFormView,
       appBar: AppBar(title: Text(isEditing ? 'Edit Student' : 'Add Student')),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20.w),
@@ -43,6 +45,7 @@ class _StudentFormPageState extends State<StudentFormPage> {
           child: Column(
             children: [
               TextFormField(
+                key: AdminKeys.studentIdInput,
                 controller: _idController,
                 decoration: const InputDecoration(labelText: 'Student ID'),
                 enabled: !isEditing,
@@ -50,24 +53,28 @@ class _StudentFormPageState extends State<StudentFormPage> {
               ),
               SizedBox(height: 16.h),
               TextFormField(
+                key: AdminKeys.studentNameInput,
                 controller: _nameController,
                 decoration: const InputDecoration(labelText: 'Full Name'),
                 validator: (v) => v!.isEmpty ? 'Required' : null,
               ),
               SizedBox(height: 16.h),
               TextFormField(
+                key: AdminKeys.studentEmailInput,
                 controller: _emailController,
                 decoration: const InputDecoration(labelText: 'Email'),
                 validator: (v) => v!.isEmpty ? 'Required' : null,
               ),
               SizedBox(height: 16.h),
               TextFormField(
+                key: AdminKeys.studentGradeInput,
                 controller: _divisionController,
                 decoration: const InputDecoration(labelText: 'Division'),
                 validator: (v) => v!.isEmpty ? 'Required' : null,
               ),
               SizedBox(height: 32.h),
               ElevatedButton(
+                key: AdminKeys.saveStudentBtn,
                 onPressed: _save,
                 child: Text(isEditing ? 'Update Student' : 'Save Student'),
               ),
@@ -94,9 +101,9 @@ class _StudentFormPageState extends State<StudentFormPage> {
       );
 
       if (widget.student != null) {
-        context.read<AdminBloc>().add(UpdateStudentEvent(student));
+        context.read<AdminPresenter>().add(UpdateStudentEvent(student));
       } else {
-        context.read<AdminBloc>().add(AddStudentEvent(student));
+        context.read<AdminPresenter>().add(AddStudentEvent(student));
       }
       Navigator.pop(context);
     }

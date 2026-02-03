@@ -5,11 +5,13 @@ import 'package:test_app/core/theme/app_theme.dart';
 class AdminSectionHeader extends StatelessWidget {
   final String title;
   final VoidCallback onAddPressed;
+  final Key? testKey;
 
   const AdminSectionHeader({
     super.key,
     required this.title,
     required this.onAddPressed,
+    this.testKey,
   });
 
   @override
@@ -24,14 +26,24 @@ class AdminSectionHeader extends StatelessWidget {
             fontSize: 10.sp,
           ),
         ),
-        IconButton(
+        ElevatedButton.icon(
+          key: testKey,
           onPressed: onAddPressed,
-          padding: EdgeInsets.zero,
-          constraints: const BoxConstraints(),
-          icon: Icon(
-            Icons.add_circle,
-            color: AppTheme.primaryColor,
-            size: 14.sp,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
+            foregroundColor: AppTheme.primaryColor,
+            elevation: 0,
+            padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+            minimumSize: Size.zero,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(6),
+            ),
+          ),
+          icon: Icon(Icons.add_circle_outline_rounded, size: 10.sp),
+          label: Text(
+            'Add Student',
+            style: TextStyle(fontSize: 7.sp, fontWeight: FontWeight.w900),
           ),
         ),
       ],

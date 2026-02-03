@@ -3,10 +3,6 @@ import 'package:test_app/features/admin/domain/repositories/admin_repository.dar
 
 class GetStudents {
   final AdminRepository repository;
-
   GetStudents(this.repository);
-
-  Future<List<Student>> call() async {
-    return await repository.getStudents();
-  }
+  Future<List<Student>> call() => repository.getStudents();
 }

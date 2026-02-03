@@ -2,10 +2,6 @@ import 'package:test_app/features/admin/domain/repositories/admin_repository.dar
 
 class DeleteStudent {
   final AdminRepository repository;
-
   DeleteStudent(this.repository);
-
-  Future<void> call(String studentId) async {
-    return await repository.deleteStudent(studentId);
-  }
+  Future<void> call(String id) => repository.deleteStudent(id);
 }

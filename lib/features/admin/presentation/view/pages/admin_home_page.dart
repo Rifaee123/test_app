@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:test_app/features/admin/presentation/bloc/admin_bloc.dart';
-import 'package:test_app/features/admin/presentation/router/admin_router.dart';
+import 'package:test_app/features/admin/presentation/presenter/admin_presenter.dart';
 import 'package:test_app/core/entities/student.dart';
 import 'package:test_app/core/theme/app_theme.dart';
 import 'package:test_app/core/utils/responsive_utils.dart';
-import 'package:test_app/features/admin/presentation/pages/widgets/admin_stat_card.dart';
-import 'package:test_app/features/admin/presentation/pages/widgets/admin_student_card.dart';
-import 'package:test_app/features/admin/presentation/pages/widgets/admin_welcome_header.dart';
-import 'package:test_app/features/admin/presentation/pages/widgets/admin_section_header.dart';
+import 'package:test_app/features/admin/presentation/view/widgets/admin_stat_card.dart';
+import 'package:test_app/features/admin/presentation/view/widgets/admin_student_card.dart';
+import 'package:test_app/features/admin/presentation/view/widgets/admin_welcome_header.dart';
+import 'package:test_app/features/admin/presentation/view/widgets/admin_section_header.dart';
+import 'package:test_app/features/admin/presentation/view/widgets/admin_shimmer_widgets.dart';
 
-import 'package:test_app/features/admin/presentation/pages/widgets/admin_shimmer_widgets.dart';
+import 'package:test_app/features/admin/presentation/view/admin_keys.dart';
 
 class AdminHomePage extends StatelessWidget {
   const AdminHomePage({super.key});
@@ -19,7 +19,8 @@ class AdminHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<AdminBloc, AdminState>(
+      key: AdminKeys.adminHomeView,
+      body: BlocBuilder<AdminPresenter, AdminState>(
         builder: (context, state) {
           if (state is AdminLoading) {
             return _buildLoadingState(context);
@@ -38,9 +39,12 @@ class AdminHomePage extends StatelessWidget {
                         _buildStatsGrid(state.students),
                         SizedBox(height: 8.h),
                         AdminSectionHeader(
+                          testKey: AdminKeys.addStudentBtn,
                           title: 'Students Management',
-                          onAddPressed: () =>
-                              AdminRouter.navigateToStudentForm(context),
+                          onAddPressed: () => context
+                              .read<AdminPresenter>()
+                              .router
+                              .navigateToStudentForm(context),
                         ),
                         SizedBox(height: 2.h),
                       ],
@@ -52,6 +56,7 @@ class AdminHomePage extends StatelessWidget {
                     horizontal: context.adaptiveWidth(6),
                   ),
                   sliver: SliverList(
+                    key: AdminKeys.studentList,
                     delegate: SliverChildBuilderDelegate((context, index) {
                       return AdminStudentCard(student: state.students[index]);
                     }, childCount: state.students.length),
@@ -71,38 +76,58 @@ class AdminHomePage extends StatelessWidget {
 
   Widget _buildAppBar(BuildContext context) {
     return SliverAppBar(
-      expandedHeight: 45.h,
+      expandedHeight: 50.h,
       floating: true,
       pinned: true,
       elevation: 0,
+      stretch: true,
       backgroundColor: AppTheme.primaryColor,
       flexibleSpace: FlexibleSpaceBar(
+        stretchModes: const [
+          StretchMode.zoomBackground,
+          StretchMode.blurBackground,
+        ],
+        background: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppTheme.primaryColor,
+                AppTheme.primaryColor.withAlpha(200),
+              ],
+            ),
+          ),
+          child: Stack(
+            children: [
+              Positioned(
+                right: -20.w,
+                top: -10.h,
+                child: Icon(
+                  Icons.admin_panel_settings,
+                  size: 60.sp,
+                  color: Colors.white.withOpacity(0.1),
+                ),
+              ),
+            ],
+          ),
+        ),
         title: Text(
-          'Admin Portal',
+          'ADMIN PORTAL',
           style: TextStyle(
             color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 10.sp,
+            fontWeight: FontWeight.w900,
+            fontSize: 9.sp,
+            letterSpacing: 1.5,
           ),
         ),
         centerTitle: false,
-        titlePadding: EdgeInsets.only(left: 8.w, bottom: 6.h),
+        titlePadding: EdgeInsets.only(left: 10.w, bottom: 8.h),
       ),
       actions: [
-        IconButton(
-          onPressed: () {},
-          icon: Icon(
-            Icons.notifications_outlined,
-            color: Colors.white,
-            size: 14.sp,
-          ),
-        ),
-        CircleAvatar(
-          radius: 8,
-          backgroundColor: Colors.white24,
-          child: Icon(Icons.person, color: Colors.white, size: 10.sp),
-        ),
-        SizedBox(width: 8.w),
+        _AppBarAction(icon: Icons.notifications_rounded, onPressed: () {}),
+        _AppBarAction(icon: Icons.person_rounded, onPressed: () {}),
+        SizedBox(width: 10.w),
       ],
     );
   }
@@ -112,13 +137,14 @@ class AdminHomePage extends StatelessWidget {
       children: [
         Expanded(
           child: AdminStatCard(
-            title: 'Total Students',
+            testKey: AdminKeys.statCardActiveStudents,
+            title: 'Active Students',
             value: students.length.toString(),
-            icon: Icons.people_alt_outlined,
-            color: Colors.indigo,
+            icon: Icons.school_rounded,
+            color: AppTheme.primaryColor,
           ),
         ),
-        SizedBox(width: 8.w),
+        SizedBox(width: 10.w),
         const Spacer(flex: 2),
       ],
     );
@@ -158,6 +184,32 @@ class AdminHomePage extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _AppBarAction extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  const _AppBarAction({required this.icon, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        margin: EdgeInsets.only(right: 6.w),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: IconButton(
+          onPressed: onPressed,
+          constraints: BoxConstraints.tightFor(width: 24.w, height: 24.h),
+          padding: EdgeInsets.zero,
+          icon: Icon(icon, color: Colors.white, size: 14.sp),
+        ),
+      ),
     );
   }
 }

@@ -2,11 +2,9 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_app/core/entities/student.dart';
 import 'package:test_app/core/entities/teacher.dart';
-import 'package:test_app/features/admin/domain/usecases/add_student.dart';
-import 'package:test_app/features/admin/domain/usecases/delete_student.dart';
-import 'package:test_app/features/admin/domain/usecases/get_admin_profile.dart';
-import 'package:test_app/features/admin/domain/usecases/get_students.dart';
-import 'package:test_app/features/admin/domain/usecases/update_student.dart';
+import 'package:test_app/features/admin/domain/interactor/profile_interactor.dart';
+import 'package:test_app/features/admin/domain/interactor/student_interactor.dart';
+import 'package:test_app/features/admin/presentation/router/admin_router.dart';
 
 // Events
 abstract class AdminEvent extends Equatable {
@@ -62,21 +60,22 @@ class AdminError extends AdminState {
   List<Object?> get props => [message];
 }
 
-// Bloc
-class AdminBloc extends Bloc<AdminEvent, AdminState> {
-  final GetAdminProfile getAdminProfile;
-  final GetStudents getStudents;
-  final AddStudent addStudent;
-  final UpdateStudent updateStudent;
-  final DeleteStudent deleteStudent;
+// Presenter (implemented via Bloc)
+class AdminPresenter extends Bloc<AdminEvent, AdminState> {
+  final IProfileInteractor _profileInteractor;
+  final IStudentReader _studentReader;
+  final IStudentWriter _studentWriter;
+  final IAdminRouter router;
 
-  AdminBloc({
-    required this.getAdminProfile,
-    required this.getStudents,
-    required this.addStudent,
-    required this.updateStudent,
-    required this.deleteStudent,
-  }) : super(AdminInitial()) {
+  AdminPresenter({
+    required IProfileInteractor profileInteractor,
+    required IStudentReader studentReader,
+    required IStudentWriter studentWriter,
+    required this.router,
+  }) : _profileInteractor = profileInteractor,
+       _studentReader = studentReader,
+       _studentWriter = studentWriter,
+       super(AdminInitial()) {
     on<LoadAdminDataEvent>(_onLoadAdminData);
     on<AddStudentEvent>(_onAddStudent);
     on<UpdateStudentEvent>(_onUpdateStudent);
@@ -89,8 +88,8 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   ) async {
     emit(AdminLoading());
     try {
-      final teacher = await getAdminProfile();
-      final students = await getStudents();
+      final teacher = await _profileInteractor.getProfile();
+      final students = await _studentReader.getStudents();
       emit(AdminLoaded(teacher: teacher, students: students));
     } catch (e) {
       emit(AdminError('Failed to load admin dashboard'));
@@ -102,7 +101,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     Emitter<AdminState> emit,
   ) async {
     try {
-      await addStudent(event.student);
+      await _studentWriter.addStudent(event.student);
       add(LoadAdminDataEvent());
     } catch (e) {
       emit(AdminError('Failed to add student'));
@@ -114,7 +113,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     Emitter<AdminState> emit,
   ) async {
     try {
-      await updateStudent(event.student);
+      await _studentWriter.updateStudent(event.student);
       add(LoadAdminDataEvent());
     } catch (e) {
       emit(AdminError('Failed to update student'));
@@ -126,7 +125,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     Emitter<AdminState> emit,
   ) async {
     try {
-      await deleteStudent(event.studentId);
+      await _studentWriter.deleteStudent(event.studentId);
       add(LoadAdminDataEvent());
     } catch (e) {
       emit(AdminError('Failed to delete student'));
