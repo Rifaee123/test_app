@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_app/core/test_ids.dart';
-import 'package:test_app/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:test_app/features/auth/presentation/bloc/auth_event.dart';
-import 'package:test_app/features/auth/presentation/bloc/auth_state.dart';
-import 'package:test_app/features/auth/presentation/router/auth_router.dart';
+import 'package:test_app/features/auth/presentation/presenter/auth_bloc.dart';
+import 'package:test_app/features/auth/presentation/presenter/auth_event.dart';
+import 'package:test_app/features/auth/presentation/presenter/auth_state.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  final bool isAdmin;
+
+  const LoginPage({super.key, this.isAdmin = false});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -29,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthAuthenticated) {
-          AuthRouter.navigateToDashboard(context, state.student);
+          // Navigation is handled by Bloc -> AuthNavigation -> Dashboard
         } else if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -59,7 +60,9 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Sign in to continue your education portal',
+                  widget.isAdmin
+                      ? 'Sign in to access admin dashboard'
+                      : 'Sign in to continue your education portal',
                   style: Theme.of(
                     context,
                   ).textTheme.bodyLarge?.copyWith(color: Colors.grey),
@@ -69,10 +72,10 @@ class _LoginPageState extends State<LoginPage> {
                   label: TestIds.studentIdInput,
                   child: TextField(
                     controller: _idController,
-                    decoration: const InputDecoration(
-                      labelText: 'Student ID',
-                      hintText: 'e.g. STU1001',
-                      prefixIcon: Icon(Icons.person_outline),
+                    decoration: InputDecoration(
+                      labelText: widget.isAdmin ? 'Admin ID' : 'Student ID',
+                      hintText: widget.isAdmin ? 'e.g. ADM001' : 'e.g. STU1001',
+                      prefixIcon: const Icon(Icons.person_outline),
                     ),
                   ),
                 ),
@@ -102,6 +105,7 @@ class _LoginPageState extends State<LoginPage> {
                                   LoginRequested(
                                     _idController.text,
                                     _passwordController.text,
+                                    isAdmin: widget.isAdmin,
                                   ),
                                 );
                               },

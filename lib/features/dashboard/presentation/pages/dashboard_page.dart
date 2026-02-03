@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:test_app/core/entities/student.dart';
+import 'package:test_app/core/entities/user.dart';
 import 'package:test_app/core/test_ids.dart';
 import 'package:test_app/features/attendance/presentation/pages/attendance_page.dart';
 import 'package:test_app/features/courses/presentation/pages/courses_page.dart';
@@ -8,7 +9,7 @@ import 'package:test_app/features/marks/presentation/pages/marks_page.dart';
 import 'package:test_app/features/profile/presentation/pages/profile_page.dart';
 
 class DashboardPage extends StatelessWidget {
-  final Student student;
+  final User student;
 
   const DashboardPage({super.key, required this.student});
 
