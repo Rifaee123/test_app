@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:test_app/core/di/injection.dart';
 import 'package:test_app/core/theme/app_theme.dart';
+import 'package:test_app/features/admin/presentation/bloc/admin_bloc.dart';
+import 'package:test_app/features/admin/presentation/pages/admin_home_page.dart';
 import 'package:test_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:test_app/features/auth/presentation/pages/login_page.dart';
 
@@ -23,12 +25,17 @@ class EduTrackApp extends StatelessWidget {
       splitScreenMode: true,
       builder: (context, child) {
         return MultiBlocProvider(
-          providers: [BlocProvider(create: (_) => sl<AuthBloc>())],
+          providers: [
+            BlocProvider(create: (_) => sl<AuthBloc>()),
+            BlocProvider(
+              create: (context) => sl<AdminBloc>()..add(LoadAdminDataEvent()),
+            ),
+          ],
           child: MaterialApp(
             title: 'EduTrack',
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
-            home: const LoginPage(),
+            home: const AdminHomePage(),
           ),
         );
       },
