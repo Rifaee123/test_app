@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:test_app/core/config/app_config.dart';
 import 'package:test_app/core/di/injection.dart';
 import 'package:test_app/core/theme/app_theme.dart';
 import 'package:test_app/features/auth/presentation/presenter/auth_bloc.dart';
@@ -10,6 +11,7 @@ import 'package:test_app/core/services/navigation_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initDI();
+
   runApp(const EduTrackApp());
 }
 

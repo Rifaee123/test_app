@@ -1,6 +1,9 @@
 import 'package:get_it/get_it.dart';
-import 'package:dio/dio.dart';
+import 'package:test_app/core/config/app_config.dart';
+import 'package:test_app/core/network/dio_builder.dart';
 import 'package:test_app/core/network/dio_network_service.dart';
+import 'package:test_app/core/network/interceptor_provider.dart';
+import 'package:test_app/core/network/interceptors/auth_interceptor.dart';
 import 'package:test_app/core/network/network_service.dart';
 import 'package:test_app/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:test_app/features/auth/domain/repositories/auth_repository.dart';
@@ -34,6 +37,32 @@ Future<void> initDI() async {
   sl.registerLazySingleton<NetworkService>(() => DioNetworkService(sl()));
   sl.registerLazySingleton(() => NavigationService());
 
-  // External
-  sl.registerLazySingleton(() => Dio());
+  // Network - Interceptors
+  sl.registerLazySingleton(() => AuthInterceptor());
+
+  // Network - Interceptor Provider
+  sl.registerLazySingleton<InterceptorProvider>(() {
+    final config = AppConfig.current;
+    return DefaultInterceptorProvider(
+      authInterceptor: sl<AuthInterceptor>(),
+      enableLogging: config.enableLogging,
+      enableRetry: true,
+      maxRetries: config.maxRetries,
+    );
+  });
+
+  // External - Dio with Builder Pattern
+  sl.registerLazySingleton(() {
+    final config = AppConfig.current;
+    final interceptorProvider = sl<InterceptorProvider>();
+
+    return DioBuilder()
+        .setBaseUrl(config.apiBaseUrl)
+        .setTimeouts(
+          connectTimeout: config.connectTimeout,
+          receiveTimeout: config.receiveTimeout,
+        )
+        .addInterceptors(interceptorProvider.provide())
+        .build();
+  });
 }

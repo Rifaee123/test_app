@@ -1,16 +1,21 @@
+import 'package:test_app/core/network/result.dart';
+
 abstract class NetworkService {
-  Future<dynamic> get(String path, {Map<String, dynamic>? queryParameters});
-  Future<dynamic> post(
+  Future<Result<dynamic>> get(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+  });
+  Future<Result<dynamic>> post(
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
   });
-  Future<dynamic> put(
+  Future<Result<dynamic>> put(
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
   });
-  Future<dynamic> delete(
+  Future<Result<dynamic>> delete(
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,

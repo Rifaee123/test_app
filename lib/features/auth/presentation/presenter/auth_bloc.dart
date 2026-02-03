@@ -60,17 +60,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
       final password = Password.create(event.password);
 
-      final user = await interactor.executeLogin(
+      final result = await interactor.executeLogin(
         authId: authId,
         password: password,
       );
 
-      if (user != null) {
-        emit(AuthAuthenticated(user));
-        // Navigation is handled by Interactor on success
-      } else {
-        emit(const AuthError('Invalid Credentials'));
-      }
+      // Handle result using the when() method
+      result.when(
+        onSuccess: (user) {
+          if (user != null) {
+            emit(AuthAuthenticated(user));
+            // Navigation is handled by Interactor on success
+          } else {
+            emit(const AuthError('Invalid Credentials'));
+          }
+        },
+        onFailure: (exception) {
+          emit(AuthError(exception.message));
+        },
+      );
     } catch (e) {
       if (e is ArgumentError) {
         emit(AuthError(e.message));

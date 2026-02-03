@@ -1,3 +1,4 @@
+import 'package:test_app/core/network/result.dart';
 import 'package:test_app/features/auth/domain/repositories/auth_repository.dart';
 
 class LogoutUseCase {
@@ -5,7 +6,7 @@ class LogoutUseCase {
 
   LogoutUseCase(this._repository);
 
-  Future<void> execute() {
+  Future<Result<void>> execute() {
     return _repository.logout();
   }
 }

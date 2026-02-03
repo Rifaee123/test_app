@@ -1,4 +1,5 @@
 import 'package:test_app/core/entities/user.dart';
+import 'package:test_app/core/network/result.dart';
 import 'package:test_app/features/auth/domain/usecases/login_usecase.dart';
 import 'package:test_app/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:test_app/features/auth/domain/value_objects/auth_id.dart';
@@ -12,25 +13,30 @@ class AuthInteractor {
 
   AuthInteractor(this._loginUseCase, this._logoutUseCase, this._navigation);
 
-  Future<User?> executeLogin({
+  Future<Result<User?>> executeLogin({
     required AuthId authId,
     required Password password,
   }) async {
-    final user = await _loginUseCase.execute(
+    final result = await _loginUseCase.execute(
       authId: authId,
       password: password,
     );
-    if (user != null) {
-      _navigation.goToDashboard(user);
-    }
-    return user;
+
+    // Handle navigation on successful login
+    result.whenSuccess((user) {
+      if (user != null) {
+        _navigation.goToDashboard(user);
+      }
+    });
+
+    return result;
   }
 
   void navigateToLogin({required bool isAdmin}) {
     _navigation.goToLogin(isAdmin: isAdmin);
   }
 
-  Future<void> executeLogout() {
+  Future<Result<void>> executeLogout() {
     return _logoutUseCase.execute();
   }
 }
