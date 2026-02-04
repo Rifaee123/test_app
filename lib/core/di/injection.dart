@@ -15,9 +15,22 @@ import 'package:test_app/features/auth/presentation/router/auth_navigation.dart'
 import 'package:test_app/features/auth/presentation/router/auth_router.dart';
 import 'package:test_app/core/services/navigation_service.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:test_app/core/storage/local_storage_service.dart';
+import 'package:test_app/core/storage/shared_prefs_local_storage_service.dart';
+
 final sl = GetIt.instance;
 
 Future<void> initDI() async {
+  // External - Shared Preferences
+  final sharedPreferences = await SharedPreferences.getInstance();
+  sl.registerLazySingleton(() => sharedPreferences);
+
+  // Core - Storage
+  sl.registerLazySingleton<LocalStorageService>(
+    () => SharedPrefsLocalStorageService(sl()),
+  );
+
   // Features - Auth
   // Router (VIPER)
   sl.registerLazySingleton<AuthNavigation>(() => AuthRouter(sl()));
@@ -31,14 +44,16 @@ Future<void> initDI() async {
   sl.registerLazySingleton(() => AuthInteractor(sl(), sl(), sl()));
 
   // Repository
-  sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(sl()));
+  sl.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(sl(), sl()),
+  );
 
   // Services
   sl.registerLazySingleton<NetworkService>(() => DioNetworkService(sl()));
   sl.registerLazySingleton(() => NavigationService());
 
   // Network - Interceptors
-  sl.registerLazySingleton(() => AuthInterceptor());
+  sl.registerLazySingleton(() => AuthInterceptor(sl()));
 
   // Network - Interceptor Provider
   sl.registerLazySingleton<InterceptorProvider>(() {

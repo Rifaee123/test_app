@@ -16,10 +16,12 @@ class AuthInteractor {
   Future<Result<User?>> executeLogin({
     required AuthId authId,
     required Password password,
+    required String role,
   }) async {
     final result = await _loginUseCase.execute(
       authId: authId,
       password: password,
+      role: role,
     );
 
     // Handle navigation on successful login

@@ -2,25 +2,27 @@ import 'package:test_app/core/entities/user.dart';
 
 class Student extends User {
   // id, name, email are in User base class
+  final String? token; // Authentication token
   final String? phone;
   final String? address;
-  final String semester;
-  final double attendance;
-  final double averageMarks;
-  final String parentName;
-  final String division;
+  final String? semester;
+  final double? attendance;
+  final double? averageMarks;
+  final String? parentName;
+  final String? division;
 
   const Student({
     required super.id,
     required super.name,
     required super.email,
+    this.token,
     this.phone,
     this.address,
-    required this.semester,
-    required this.attendance,
-    required this.averageMarks,
-    required this.parentName,
-    required this.division,
+    this.semester,
+    this.attendance,
+    this.averageMarks,
+    this.parentName,
+    this.division,
   });
 
   @override

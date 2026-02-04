@@ -129,7 +129,7 @@ class DashboardPage extends StatelessWidget {
                 child: Column(
                   children: [
                     Text(
-                      student.division,
+                      student.division ?? "",
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -151,8 +151,8 @@ class DashboardPage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildInfoColumn('Parent / Guardian', student.parentName),
-              _buildInfoColumn('Academic Term', student.semester),
+              _buildInfoColumn('Parent / Guardian', student.parentName ?? ""),
+              _buildInfoColumn('Academic Term', student.semester ?? ""),
             ],
           ),
         ],
