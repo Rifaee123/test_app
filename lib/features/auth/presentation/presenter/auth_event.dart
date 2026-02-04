@@ -12,7 +12,11 @@ class LoginRequested extends AuthEvent {
   final String password;
   final bool isAdmin;
 
-  const LoginRequested(this.studentId, this.password, {required this.isAdmin});
+  const LoginRequested({
+    required this.studentId,
+    required this.password,
+    required this.isAdmin,
+  });
 
   @override
   List<Object> get props => [studentId, password, isAdmin];
