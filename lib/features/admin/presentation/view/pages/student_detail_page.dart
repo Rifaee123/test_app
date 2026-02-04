@@ -105,17 +105,17 @@ class _StudentDetailPageState extends State<StudentDetailPage> {
         ),
         _InfoTile(
           label: 'Division',
-          value: student.division,
+          value: student.division ?? 'N/A',
           icon: Icons.class_outlined,
         ),
         _InfoTile(
           label: 'Date of Birth',
-          value: student.dateOfBirth,
+          value: student.dateOfBirth ?? 'N/A',
           icon: Icons.cake_outlined,
         ),
         _InfoTile(
           label: 'Parent Name',
-          value: student.parentName,
+          value: student.parentName ?? 'N/A',
           icon: Icons.person_outline,
         ),
         _InfoTile(

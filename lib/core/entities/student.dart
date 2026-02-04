@@ -1,52 +1,35 @@
 import 'package:test_app/core/entities/user.dart';
 
 class Student extends User {
-<<<<<<< HEAD
-  final String? parentPhone;
-=======
   // id, name, email are in User base class
   final String? token; // Authentication token
   final String? phone;
->>>>>>> 1a07ada0f75be57277965f78d17dbfa68cb81d5c
+  final String? parentPhone;
   final String? address;
   final String? semester;
   final double? attendance;
   final double? averageMarks;
-<<<<<<< HEAD
-  final String parentName;
-  final String division;
-  final String dateOfBirth;
-  final List<String> subjects;
-=======
   final String? parentName;
   final String? division;
->>>>>>> 1a07ada0f75be57277965f78d17dbfa68cb81d5c
+  final String? dateOfBirth;
+  final List<String> subjects;
 
   const Student({
-    required super.id,
-    required super.name,
-<<<<<<< HEAD
-    super.email = '',
-    this.parentPhone,
-=======
-    required super.email,
+    required String id,
+    required String name,
+    required String email,
     this.token,
     this.phone,
->>>>>>> 1a07ada0f75be57277965f78d17dbfa68cb81d5c
+    this.parentPhone,
     this.address,
     this.semester,
     this.attendance,
     this.averageMarks,
-<<<<<<< HEAD
-    required this.parentName,
-    required this.division,
-    required this.dateOfBirth,
-    required this.subjects,
-=======
     this.parentName,
     this.division,
->>>>>>> 1a07ada0f75be57277965f78d17dbfa68cb81d5c
-  });
+    this.dateOfBirth,
+    this.subjects = const [],
+  }) : super(id: id, name: name, email: email);
 
   @override
   String get role => 'STUDENT';
@@ -54,6 +37,8 @@ class Student extends User {
   @override
   List<Object?> get props => [
     ...super.props,
+    token,
+    phone,
     parentPhone,
     address,
     semester,
@@ -67,6 +52,9 @@ class Student extends User {
 
   Student copyWith({
     String? name,
+    String? email,
+    String? token,
+    String? phone,
     String? parentPhone,
     String? address,
     String? parentName,
@@ -77,7 +65,9 @@ class Student extends User {
     return Student(
       id: id,
       name: name ?? this.name,
-      email: email,
+      email: email ?? this.email,
+      token: token ?? this.token,
+      phone: phone ?? this.phone,
       parentPhone: parentPhone ?? this.parentPhone,
       address: address ?? this.address,
       semester: semester,

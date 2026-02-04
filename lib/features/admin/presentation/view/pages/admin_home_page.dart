@@ -27,7 +27,7 @@ class AdminHomePage extends StatelessWidget {
           if (state is AdminLoading) {
             return _buildLoadingState(context);
           } else if (state is AdminLoaded) {
-            final teacher = state.teacher;
+            final user = state.user;
             final students = state.students;
             return CustomScrollView(
               slivers: [
@@ -38,7 +38,7 @@ class AdminHomePage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        AdminWelcomeHeader(teacher: teacher),
+                        AdminWelcomeHeader(user: user),
                         SizedBox(height: 6.h),
                         _buildStatsGrid(state.stats),
                         SizedBox(height: 8.h),

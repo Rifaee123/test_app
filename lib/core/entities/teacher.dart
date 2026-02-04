@@ -1,27 +1,28 @@
-import 'package:equatable/equatable.dart';
+import 'package:test_app/core/entities/user.dart';
 
-class Teacher extends Equatable {
-  final String id;
-  final String name;
-  final String email;
+class Teacher extends User {
   final String subject;
   final String department;
   final String? profileImageUrl;
 
   const Teacher({
-    required this.id,
-    required this.name,
-    required this.email,
+    required super.id,
+    required super.name,
+    required super.email,
     required this.subject,
     required this.department,
     this.profileImageUrl,
   });
 
   @override
+  String get role => 'TEACHER';
+
+  @override
+  String? get token => null; // Teachers might have tokens in a real app
+
+  @override
   List<Object?> get props => [
-    id,
-    name,
-    email,
+    ...super.props,
     subject,
     department,
     profileImageUrl,

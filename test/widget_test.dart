@@ -30,7 +30,7 @@ void main() {
       department: 'Math',
     );
     when(() => mockAdminDashboardBloc.state).thenReturn(
-      AdminLoaded(teacher: mockTeacher, students: const [], stats: const []),
+      AdminLoaded(user: mockTeacher, students: const [], stats: const []),
     );
 
     sl.reset();

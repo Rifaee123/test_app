@@ -43,7 +43,7 @@ class AdminDashboardBloc extends Bloc<AdminEvent, AdminState> {
       // OCP: We can add new stats by injecting new generators via DI
       final stats = _statGenerators.map((g) => g.generate(students)).toList();
 
-      emit(AdminLoaded(teacher: teacher, students: students, stats: stats));
+      emit(AdminLoaded(user: teacher, students: students, stats: stats));
     } catch (e) {
       if (state is! AdminLoaded) {
         emit(AdminError('Failed to load admin dashboard'));

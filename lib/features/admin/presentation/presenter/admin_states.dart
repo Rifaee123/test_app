@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:test_app/core/entities/student.dart';
-import 'package:test_app/core/entities/teacher.dart';
+import 'package:test_app/core/entities/user.dart';
 
 // Stat definition for OCP
 class DashboardStat extends Equatable {
@@ -43,18 +43,18 @@ class AdminError extends AdminState {
 // and don't force each other to fulfill irrelevant contracts.
 
 class AdminLoaded extends AdminState {
-  final Teacher teacher;
+  final User user;
   final List<Student> students;
   final List<DashboardStat> stats;
 
   AdminLoaded({
-    required this.teacher,
+    required this.user,
     required this.students,
     required this.stats,
   });
 
   @override
-  List<Object?> get props => [teacher, students, stats];
+  List<Object?> get props => [user, students, stats];
 }
 
 class StudentDetailLoaded extends AdminState {
