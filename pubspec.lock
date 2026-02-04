@@ -448,6 +448,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
+<<<<<<< HEAD
   shared_preferences:
     dependency: "direct main"
     description:
@@ -504,6 +505,16 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.1"
+=======
+  shimmer:
+    dependency: "direct main"
+    description:
+      name: shimmer
+      sha256: "5f88c883a22e9f9f299e5ba0e4f7e6054857224976a5d9f839d4ebdc94a14ac9"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.0"
+>>>>>>> b8a09a720a5ff5a55c4fbddbf313659def3ea4a6
   sky_engine:
     dependency: transitive
     description: flutter

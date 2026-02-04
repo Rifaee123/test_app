@@ -26,7 +26,13 @@ class EduTrackApp extends StatelessWidget {
       splitScreenMode: true,
       builder: (context, child) {
         return MultiBlocProvider(
-          providers: [BlocProvider(create: (_) => sl<AuthBloc>())],
+          providers: [
+            BlocProvider(create: (_) => sl<AuthBloc>()),
+            BlocProvider(
+              create: (context) =>
+                  sl<AdminPresenter>()..add(LoadAdminDataEvent()),
+            ),
+          ],
           child: MaterialApp(
             title: 'EduTrack',
             navigatorKey: sl<NavigationService>().navigatorKey,
