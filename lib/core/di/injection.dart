@@ -1,4 +1,10 @@
 import 'package:get_it/get_it.dart';
+import 'package:test_app/core/config/app_config.dart';
+import 'package:test_app/core/network/dio_builder.dart';
+import 'package:test_app/core/network/dio_network_service.dart';
+import 'package:test_app/core/network/interceptor_provider.dart';
+import 'package:test_app/core/network/interceptors/auth_interceptor.dart';
+import 'package:test_app/core/network/network_service.dart';
 import 'package:test_app/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:test_app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:test_app/features/auth/domain/usecases/auth_interactor.dart';
@@ -18,11 +24,16 @@ final sl = GetIt.instance;
 
 Future<void> initDI() async {
   // Features - Auth
+  // Router (VIPER)
+  sl.registerLazySingleton<AuthNavigation>(() => AuthRouter(sl()));
+
   // Bloc
   sl.registerFactory(() => AuthBloc(sl()));
 
   // Use cases
-  sl.registerLazySingleton(() => AuthInteractor(sl()));
+  sl.registerLazySingleton(() => LoginUseCase(sl()));
+  sl.registerLazySingleton(() => LogoutUseCase(sl()));
+  sl.registerLazySingleton(() => AuthInteractor(sl(), sl(), sl()));
 
   // Repository
   sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl());

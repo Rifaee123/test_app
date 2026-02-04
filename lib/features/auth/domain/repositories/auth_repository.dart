@@ -1,6 +1,7 @@
-import 'package:test_app/core/entities/student.dart';
+import 'package:test_app/core/entities/user.dart';
+import 'package:test_app/core/network/result.dart';
 
 abstract class AuthRepository {
-  Future<Student?> login(String email, String password);
-  Future<void> logout();
+  Future<Result<User?>> login(String id, String password);
+  Future<Result<void>> logout();
 }
