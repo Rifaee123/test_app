@@ -1,9 +1,7 @@
-import 'package:equatable/equatable.dart';
+import 'package:test_app/core/entities/user.dart';
 
-class Student extends Equatable {
-  final String id;
-  final String name;
-  final String email;
+class Student extends User {
+  // id, name, email are in User base class
   final String? phone;
   final String? address;
   final String semester;
@@ -13,9 +11,9 @@ class Student extends Equatable {
   final String division;
 
   const Student({
-    required this.id,
-    required this.name,
-    required this.email,
+    required super.id,
+    required super.name,
+    required super.email,
     this.phone,
     this.address,
     required this.semester,
@@ -27,9 +25,7 @@ class Student extends Equatable {
 
   @override
   List<Object?> get props => [
-    id,
-    name,
-    email,
+    ...super.props,
     phone,
     address,
     semester,
