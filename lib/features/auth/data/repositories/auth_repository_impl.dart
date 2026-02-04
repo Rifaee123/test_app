@@ -1,6 +1,4 @@
 import 'package:test_app/core/entities/user.dart';
-import 'package:test_app/core/entities/student.dart';
-import 'package:test_app/core/entities/admin.dart';
 import 'package:test_app/core/network/result.dart';
 import 'package:test_app/core/network/api_endpoints.dart';
 import 'package:test_app/core/network/exceptions/network_exception.dart';
@@ -33,58 +31,66 @@ class AuthRepositoryImpl implements AuthRepository {
       role: role,
     );
 
-    // Make API call
-    final result = await _networkService.post(
-      ApiEndpoints.login,
-      data: requestDto.toJson(),
-    );
+    try {
+      final result = await _networkService.post(
+        ApiEndpoints.login,
+        data: requestDto.toJson(),
+      );
 
-    // Handle result using functional approach with correct parameter names
-    return result.when(
-      onSuccess: (data) {
-        try {
-          // Parse response
-          final responseModel = LoginResponseModel.fromJson(
-            data as Map<String, dynamic>,
-          );
+      if (result.isSuccess) {
+        final data = result.getOrThrow();
+        final responseModel = LoginResponseModel.fromJson(
+          data as Map<String, dynamic>,
+        );
+        final user = LoginResponseMapperFactory.mapResponse(responseModel);
 
-          // Convert to User entity using mapper
-          final user = LoginResponseMapperFactory.mapResponse(responseModel);
+        // Save token and role if user has them
+        // We prioritize the token from response model if available directly
+        // We prioritize the token from response model if available directly, then rely on User entity
+        final token = responseModel.token ?? user.token;
+        final role = responseModel.role ?? user.role;
+        final userId =
+            responseModel.studentId ?? responseModel.username ?? user.id;
 
-          // Save token if user has one (from response or entity)
-          // We prioritize the token from response model if available directly
-          if (responseModel.token != null) {
-            _localStorageService.saveToken(responseModel.token!);
-          } else if (user is Student && user.token != null) {
-            _localStorageService.saveToken(user.token!);
-          } else if (user is Admin && user.token != null) {
-            _localStorageService.saveToken(user.token!);
-          }
-
-          return Result.success(user);
-        } catch (e) {
-          // Handle parsing errors - wrap in NetworkException
-          return Result.failure(
-            UnknownNetworkException(
-              message: 'Failed to parse login response: ${e.toString()}',
-              originalError: e,
-            ),
-          );
+        if (token != null) {
+          await _localStorageService.saveToken(token);
         }
-      },
-      onFailure: (error) {
-        // Pass through network errors
-        return Result.failure(error);
-      },
-    );
+
+        if (userId != null && userId.isNotEmpty) {
+          await _localStorageService.saveUserId(userId);
+        }
+
+        // Save role (always available from entity now)
+        await _localStorageService.saveRole(role);
+
+        return Result.success(user);
+      } else {
+        return Result.failure(
+          result.getExceptionOrNull() ??
+              UnknownNetworkException(message: 'Unknown error occurred'),
+        );
+      }
+    } catch (e) {
+      if (e is NetworkException) {
+        return Result.failure(e);
+      }
+      return Result.failure(
+        UnknownNetworkException(
+          message: 'Login failed: ${e.toString()}',
+          originalError: e,
+        ),
+      );
+    }
   }
 
   @override
   Future<Result<void>> logout() async {
     // Implement logout API call when endpoint is available (optional)
 
-    // Clear local token
+    // Clear local token and role
     await _localStorageService.clearToken();
+    await _localStorageService.clearRole();
+    await _localStorageService.clearUserId();
 
     await Future.delayed(const Duration(milliseconds: 500));
     return Result.success(null);

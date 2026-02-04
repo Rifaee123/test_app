@@ -15,5 +15,8 @@ class Admin extends User {
   }) : super(id: id, name: name, email: email);
 
   @override
+  String get role => 'ADMIN';
+
+  @override
   List<Object?> get props => [...super.props, department, permissions];
 }

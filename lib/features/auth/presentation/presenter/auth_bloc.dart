@@ -9,7 +9,7 @@ import 'auth_event.dart';
 import 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final AuthInteractor interactor;
+  final IAuthInteractor interactor;
 
   AuthBloc(this.interactor) : super(AuthInitial()) {
     on<LoginRequested>(_onLoginRequested);

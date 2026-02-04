@@ -13,4 +13,22 @@ abstract class LocalStorageService {
 
   /// Check if a token exists
   Future<bool> hasToken();
+
+  /// Save the user role
+  Future<void> saveRole(String role);
+
+  /// Get the user role
+  Future<String?> getRole();
+
+  /// Clear the user role
+  Future<void> clearRole();
+
+  /// Save the user ID
+  Future<void> saveUserId(String userId);
+
+  /// Get the user ID
+  Future<String?> getUserId();
+
+  /// Clear the user ID
+  Future<void> clearUserId();
 }

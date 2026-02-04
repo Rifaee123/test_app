@@ -28,4 +28,38 @@ class SharedPrefsLocalStorageService implements LocalStorageService {
   Future<bool> hasToken() async {
     return _prefs.containsKey(_tokenKey);
   }
+
+  static const String _roleKey = 'user_role';
+
+  @override
+  Future<void> saveRole(String role) async {
+    await _prefs.setString(_roleKey, role);
+  }
+
+  @override
+  Future<String?> getRole() async {
+    return _prefs.getString(_roleKey);
+  }
+
+  @override
+  Future<void> clearRole() async {
+    await _prefs.remove(_roleKey);
+  }
+
+  static const String _userIdKey = 'user_id';
+
+  @override
+  Future<void> saveUserId(String userId) async {
+    await _prefs.setString(_userIdKey, userId);
+  }
+
+  @override
+  Future<String?> getUserId() async {
+    return _prefs.getString(_userIdKey);
+  }
+
+  @override
+  Future<void> clearUserId() async {
+    await _prefs.remove(_userIdKey);
+  }
 }

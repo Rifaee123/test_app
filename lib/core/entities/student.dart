@@ -26,6 +26,9 @@ class Student extends User {
   });
 
   @override
+  String get role => 'STUDENT';
+
+  @override
   List<Object?> get props => [
     ...super.props,
     phone,

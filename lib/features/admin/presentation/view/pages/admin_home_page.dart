@@ -13,8 +13,11 @@ import 'package:test_app/features/admin/presentation/view/widgets/admin_shimmer_
 
 import 'package:test_app/features/admin/presentation/view/admin_keys.dart';
 
+import 'package:test_app/core/entities/admin.dart';
+
 class AdminHomePage extends StatelessWidget {
-  const AdminHomePage({super.key});
+  final Admin? admin;
+  const AdminHomePage({super.key, this.admin});
 
   @override
   Widget build(BuildContext context) {
