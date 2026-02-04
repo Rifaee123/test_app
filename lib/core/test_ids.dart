@@ -5,6 +5,14 @@ class TestIds {
   static const loginButton = 'login_button';
   static const loginError = 'login_error_text';
 
+  // Landing
+  static const landingStudentBtn = 'landing_student_button';
+  static const landingAdminBtn = 'landing_admin_button';
+  static const landingTitle = 'landing_title';
+
+  // Splash
+  static const splashLogo = 'splash_logo';
+
   // Dashboard
   static const dashboardTitle = 'dashboard_title';
   static const attendanceCard = 'attendance_card';

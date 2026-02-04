@@ -70,6 +70,7 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 48),
                 Semantics(
                   label: TestIds.studentIdInput,
+                  container: true,
                   child: TextField(
                     controller: _idController,
                     decoration: InputDecoration(
@@ -82,6 +83,7 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 20),
                 Semantics(
                   label: TestIds.passwordInput,
+                  container: true,
                   child: TextField(
                     controller: _passwordController,
                     obscureText: true,
@@ -97,6 +99,8 @@ class _LoginPageState extends State<LoginPage> {
                   builder: (context, state) {
                     return Semantics(
                       label: TestIds.loginButton,
+                      container: true,
+                      excludeSemantics: true,
                       child: ElevatedButton(
                         onPressed: state is AuthLoading
                             ? null
