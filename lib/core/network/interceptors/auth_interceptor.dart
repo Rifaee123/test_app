@@ -1,38 +1,34 @@
 import 'package:dio/dio.dart';
+import 'package:test_app/core/storage/local_storage_service.dart';
 
 /// Interceptor for adding authentication tokens to requests
 /// Automatically adds Authorization header to all requests
+/// Follows Dependency Inversion Principle - depends on abstraction
 class AuthInterceptor extends Interceptor {
-  String? _token;
+  final LocalStorageService _localStorageService;
 
-  /// Set the authentication token
-  void setToken(String token) {
-    _token = token;
-  }
-
-  /// Clear the authentication token
-  void clearToken() {
-    _token = null;
-  }
-
-  /// Get the current token
-  String? get token => _token;
+  AuthInterceptor(this._localStorageService);
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    // HARDCODED TOKEN FOR TESTING
-    const testToken =
-        'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MDE4Mzk5NywiZXhwIjoxNzcwMjcwMzk3fQ.3wBSVRY9UVWhFzW7oG1O9rgTMjW8g8kyEsKVmYD8sObNdeueLikhKPZ0OAK1k6iJqGjhaXmC9IencgBjKAtG-Q';
-    options.headers['Authorization'] = 'Bearer $testToken';
+  void onRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
+    // Get token from secure storage
+    final token = await _localStorageService.getToken();
 
+    // Add Authorization header if token exists
+    if (token != null && token.isNotEmpty) {
+      options.headers['Authorization'] = 'Bearer $token';
+    }
     super.onRequest(options, handler);
   }
 
   @override
-  void onError(DioException err, ErrorInterceptorHandler handler) {
+  void onError(DioException err, ErrorInterceptorHandler handler) async {
     // Clear token on 401 Unauthorized
     if (err.response?.statusCode == 401) {
-      clearToken();
+      await _localStorageService.clearToken();
     }
     super.onError(err, handler);
   }

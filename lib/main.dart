@@ -3,8 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:test_app/core/di/injection.dart';
 import 'package:test_app/core/theme/app_theme.dart';
+<<<<<<< HEAD
 import 'package:test_app/features/admin/presentation/view/pages/admin_home_page.dart';
 import 'package:test_app/features/auth/presentation/presenter/auth_bloc.dart';
+=======
+import 'package:test_app/features/admin/presentation/presenter/admin_presenter.dart';
+import 'package:test_app/features/auth/presentation/presenter/auth_bloc.dart';
+import 'package:test_app/features/splash/presentation/view/splash_page.dart';
+>>>>>>> 1a07ada0f75be57277965f78d17dbfa68cb81d5c
 import 'package:test_app/core/services/navigation_service.dart';
 import 'package:test_app/features/admin/presentation/presenter/admin_presenter.dart';
 
@@ -38,7 +44,11 @@ class EduTrackApp extends StatelessWidget {
             navigatorKey: sl<NavigationService>().navigatorKey,
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
+<<<<<<< HEAD
             home: const AdminHomePage(),
+=======
+            home: const SplashPage(),
+>>>>>>> 1a07ada0f75be57277965f78d17dbfa68cb81d5c
           ),
         );
       },

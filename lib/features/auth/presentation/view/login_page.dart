@@ -103,8 +103,8 @@ class _LoginPageState extends State<LoginPage> {
                             : () {
                                 context.read<AuthBloc>().add(
                                   LoginRequested(
-                                    _idController.text,
-                                    _passwordController.text,
+                                    studentId: _idController.text,
+                                    password: _passwordController.text,
                                     isAdmin: widget.isAdmin,
                                   ),
                                 );

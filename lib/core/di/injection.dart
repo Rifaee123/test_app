@@ -6,7 +6,17 @@ import 'package:test_app/core/network/dio_network_service.dart';
 import 'package:test_app/core/network/interceptor_provider.dart';
 import 'package:test_app/core/network/interceptors/auth_interceptor.dart';
 import 'package:test_app/core/network/network_service.dart';
-import 'package:test_app/core/services/navigation_service.dart';
+import 'package:test_app/features/admin/data/repositories/admin_repository_impl.dart';
+import 'package:test_app/features/admin/domain/interactor/admin_interactor.dart';
+import 'package:test_app/features/admin/domain/repositories/admin_repository.dart';
+import 'package:test_app/features/admin/domain/usecases/add_student.dart';
+import 'package:test_app/features/admin/domain/usecases/delete_student.dart';
+import 'package:test_app/features/admin/domain/usecases/get_admin_profile.dart';
+import 'package:test_app/features/admin/domain/usecases/get_students.dart';
+import 'package:test_app/features/admin/domain/usecases/get_student_by_id.dart';
+import 'package:test_app/features/admin/domain/usecases/update_student.dart';
+import 'package:test_app/features/admin/presentation/presenter/admin_presenter.dart';
+import 'package:test_app/features/admin/presentation/router/admin_router.dart';
 import 'package:test_app/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:test_app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:test_app/features/auth/domain/usecases/login_usecase.dart';
@@ -15,60 +25,82 @@ import 'package:test_app/features/auth/presentation/interactor/auth_interactor.d
 import 'package:test_app/features/auth/presentation/presenter/auth_bloc.dart';
 import 'package:test_app/features/auth/presentation/router/auth_navigation.dart';
 import 'package:test_app/features/auth/presentation/router/auth_router.dart';
-import 'package:test_app/features/admin/data/repositories/admin_repository_impl.dart';
-import 'package:test_app/features/admin/domain/repositories/admin_repository.dart';
-import 'package:test_app/features/admin/domain/interactor/admin_interactor.dart';
-import 'package:test_app/features/admin/domain/usecases/add_student.dart';
-import 'package:test_app/features/admin/domain/usecases/get_admin_profile.dart';
-import 'package:test_app/features/admin/domain/usecases/get_students.dart';
-import 'package:test_app/features/admin/domain/usecases/get_student_by_id.dart';
-import 'package:test_app/features/admin/domain/usecases/update_student.dart';
-import 'package:test_app/features/admin/domain/usecases/delete_student.dart';
-import 'package:test_app/features/admin/presentation/router/admin_router.dart';
-import 'package:test_app/features/admin/presentation/presenter/stat_generators.dart';
-import 'package:test_app/features/admin/presentation/presenter/admin_presenter.dart';
+import 'package:test_app/features/splash/presentation/presenter/splash_bloc.dart';
+import 'package:test_app/features/auth/domain/usecases/check_auth_status_usecase.dart';
+import 'package:test_app/core/services/navigation_service.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:test_app/core/storage/local_storage_service.dart';
+import 'package:test_app/core/storage/shared_prefs_local_storage_service.dart';
 
 final sl = GetIt.instance;
 
 Future<void> initDI() async {
-  // Core - Networking
-  sl.registerLazySingleton<AppConfig>(() => AppConfig.current);
+  // External - Shared Preferences
+  final sharedPreferences = await SharedPreferences.getInstance();
+  sl.registerLazySingleton(() => sharedPreferences);
 
-  sl.registerLazySingleton<DioBuilder>(() => DioBuilder());
-
-  sl.registerLazySingleton<AuthInterceptor>(() => AuthInterceptor());
-
-  sl.registerLazySingleton<InterceptorProvider>(
-    () => DefaultInterceptorProvider(authInterceptor: sl()),
+  // Core - Storage
+  sl.registerLazySingleton<LocalStorageService>(
+    () => SharedPrefsLocalStorageService(sl()),
   );
-
-  sl.registerLazySingleton<Dio>(
-    () => sl<DioBuilder>()
-        .setBaseUrl(sl<AppConfig>().apiBaseUrl)
-        .setTimeouts(
-          connectTimeout: sl<AppConfig>().connectTimeout,
-          receiveTimeout: sl<AppConfig>().receiveTimeout,
-        )
-        .addInterceptors(sl<InterceptorProvider>().provide())
-        .build(),
-  );
-
-  sl.registerLazySingleton<NetworkService>(() => DioNetworkService(sl()));
 
   // Features - Auth
   // Router (VIPER)
   sl.registerLazySingleton<AuthNavigation>(() => AuthRouter(sl()));
 
   // Bloc
-  sl.registerFactory(() => AuthBloc(sl()));
+  sl.registerFactory(() => AuthBloc(sl<IAuthInteractor>()));
 
   // Use cases
   sl.registerLazySingleton(() => LoginUseCase(sl()));
   sl.registerLazySingleton(() => LogoutUseCase(sl()));
-  sl.registerLazySingleton(() => AuthInteractor(sl(), sl(), sl()));
+  // Register IAuthInteractor with implementation
+  sl.registerLazySingleton<IAuthInteractor>(
+    () => AuthInteractor(sl(), sl(), sl()),
+  );
 
   // Repository
-  sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(sl()));
+  sl.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(sl(), sl()),
+  );
+
+  // Services
+  sl.registerLazySingleton<NetworkService>(() => DioNetworkService(sl()));
+  sl.registerLazySingleton(() => NavigationService());
+
+  // Features - Splash
+  sl.registerFactory(() => SplashBloc(sl(), sl()));
+  sl.registerLazySingleton(() => CheckAuthStatusUseCase(sl()));
+
+  // Network - Interceptors
+  sl.registerLazySingleton(() => AuthInterceptor(sl()));
+
+  // Network - Interceptor Provider
+  sl.registerLazySingleton<InterceptorProvider>(() {
+    final config = AppConfig.current;
+    return DefaultInterceptorProvider(
+      authInterceptor: sl<AuthInterceptor>(),
+      enableLogging: config.enableLogging,
+      enableRetry: true,
+      maxRetries: config.maxRetries,
+    );
+  });
+
+  // External - Dio with Builder Pattern
+  sl.registerLazySingleton(() {
+    final config = AppConfig.current;
+    final interceptorProvider = sl<InterceptorProvider>();
+
+    return DioBuilder()
+        .setBaseUrl(config.apiBaseUrl)
+        .setTimeouts(
+          connectTimeout: config.connectTimeout,
+          receiveTimeout: config.receiveTimeout,
+        )
+        .addInterceptors(interceptorProvider.provide())
+        .build();
+  });
 
   // Features - Admin
   // Dashboard Bloc

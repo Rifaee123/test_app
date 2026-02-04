@@ -6,7 +6,17 @@ import 'package:test_app/features/auth/domain/value_objects/auth_id.dart';
 import 'package:test_app/features/auth/domain/value_objects/password.dart';
 import 'package:test_app/features/auth/presentation/router/auth_navigation.dart';
 
-class AuthInteractor {
+abstract class IAuthInteractor {
+  Future<Result<User?>> executeLogin({
+    required AuthId authId,
+    required Password password,
+    required String role,
+  });
+  void navigateToLogin({required bool isAdmin});
+  Future<Result<void>> executeLogout();
+}
+
+class AuthInteractor implements IAuthInteractor {
   final LoginUseCase _loginUseCase;
   final LogoutUseCase _logoutUseCase;
   final AuthNavigation _navigation;
@@ -16,16 +26,18 @@ class AuthInteractor {
   Future<Result<User?>> executeLogin({
     required AuthId authId,
     required Password password,
+    required String role,
   }) async {
     final result = await _loginUseCase.execute(
       authId: authId,
       password: password,
+      role: role,
     );
 
     // Handle navigation on successful login
     result.whenSuccess((user) {
       if (user != null) {
-        _navigation.goToDashboard(user);
+        _navigation.goToHome(user);
       }
     });
 

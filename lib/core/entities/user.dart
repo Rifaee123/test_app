@@ -5,6 +5,9 @@ abstract class User extends Equatable {
   final String name;
   final String email;
 
+  String get role;
+  String? get token;
+
   const User({required this.id, required this.name, required this.email});
 
   @override
