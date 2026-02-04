@@ -17,19 +17,30 @@ class StudentFormPage extends StatefulWidget {
 class _StudentFormPageState extends State<StudentFormPage> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
-  late TextEditingController _idController;
-  late TextEditingController _emailController;
-  late TextEditingController _divisionController;
+  late TextEditingController _parentNameController;
+  late TextEditingController _parentPhoneController;
+  late TextEditingController _dobController;
+  String? _selectedDivision;
+
+  final List<String> _divisions = ['A', 'B', 'C'];
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.student?.name ?? '');
-    _idController = TextEditingController(text: widget.student?.id ?? '');
-    _emailController = TextEditingController(text: widget.student?.email ?? '');
-    _divisionController = TextEditingController(
-      text: widget.student?.division ?? '',
+    _parentNameController = TextEditingController(
+      text: widget.student?.parentName ?? '',
     );
+    _parentPhoneController = TextEditingController(
+      text: widget.student?.parentPhone ?? '',
+    );
+    _dobController = TextEditingController(
+      text: widget.student?.dateOfBirth ?? '',
+    );
+    _selectedDivision = widget.student?.division;
+    if (_selectedDivision != null && !_divisions.contains(_selectedDivision)) {
+      _selectedDivision = null; // Reset if invalid
+    }
   }
 
   @override
@@ -45,32 +56,62 @@ class _StudentFormPageState extends State<StudentFormPage> {
           child: Column(
             children: [
               TextFormField(
-                key: AdminKeys.studentIdInput,
-                controller: _idController,
-                decoration: const InputDecoration(labelText: 'Student ID'),
-                enabled: !isEditing,
-                validator: (v) => v!.isEmpty ? 'Required' : null,
-              ),
-              SizedBox(height: 16.h),
-              TextFormField(
                 key: AdminKeys.studentNameInput,
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Full Name'),
+                decoration: const InputDecoration(
+                  labelText: 'Full Name',
+                  hintText: 'e.g. Kaju',
+                ),
                 validator: (v) => v!.isEmpty ? 'Required' : null,
               ),
               SizedBox(height: 16.h),
               TextFormField(
-                key: AdminKeys.studentEmailInput,
-                controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
+                key: AdminKeys.studentDobInput,
+                controller: _dobController,
+                decoration: const InputDecoration(
+                  labelText: 'Date of Birth',
+                  hintText: 'YYYY-MM-DD (e.g. 2010-05-23)',
+                ),
                 validator: (v) => v!.isEmpty ? 'Required' : null,
               ),
               SizedBox(height: 16.h),
               TextFormField(
+                key: AdminKeys.studentParentNameInput,
+                controller: _parentNameController,
+                decoration: const InputDecoration(
+                  labelText: 'Parent Name',
+                  hintText: 'e.g. Rakhav',
+                ),
+                validator: (v) => v!.isEmpty ? 'Required' : null,
+              ),
+              SizedBox(height: 16.h),
+              TextFormField(
+                key: AdminKeys.studentParentPhoneInput,
+                controller: _parentPhoneController,
+                decoration: const InputDecoration(
+                  labelText: 'Parent Phone',
+                  hintText: 'e.g. 9876543210',
+                ),
+                validator: (v) => v!.isEmpty ? 'Required' : null,
+                keyboardType: TextInputType.phone,
+              ),
+              SizedBox(height: 16.h),
+              DropdownButtonFormField<String>(
                 key: AdminKeys.studentGradeInput,
-                controller: _divisionController,
+                initialValue: _selectedDivision,
                 decoration: const InputDecoration(labelText: 'Division'),
-                validator: (v) => v!.isEmpty ? 'Required' : null,
+                items: _divisions.map((String division) {
+                  return DropdownMenuItem<String>(
+                    value: division,
+                    child: Text(division),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedDivision = newValue;
+                  });
+                },
+                validator: (v) => v == null ? 'Required' : null,
               ),
               SizedBox(height: 32.h),
               ElevatedButton(
@@ -88,22 +129,24 @@ class _StudentFormPageState extends State<StudentFormPage> {
   void _save() {
     if (_formKey.currentState!.validate()) {
       final student = Student(
-        id: _idController.text,
+        id: widget.student?.id ?? 'STU${DateTime.now().millisecondsSinceEpoch}',
         name: _nameController.text,
-        email: _emailController.text,
-        division: _divisionController.text,
-        phone: widget.student?.phone ?? '',
+        email: '', // Email removed from form
+        division: _selectedDivision!,
+        parentPhone: _parentPhoneController.text,
+        parentName: _parentNameController.text,
+        dateOfBirth: _dobController.text,
         address: widget.student?.address ?? '',
         semester: widget.student?.semester ?? '1st Semester',
         attendance: widget.student?.attendance ?? 0.0,
         averageMarks: widget.student?.averageMarks ?? 0.0,
-        parentName: widget.student?.parentName ?? '',
+        subjects: widget.student?.subjects ?? const [],
       );
 
       if (widget.student != null) {
-        context.read<AdminPresenter>().add(UpdateStudentEvent(student));
+        context.read<StudentManagementBloc>().add(UpdateStudentEvent(student));
       } else {
-        context.read<AdminPresenter>().add(AddStudentEvent(student));
+        context.read<StudentManagementBloc>().add(AddStudentEvent(student));
       }
       Navigator.pop(context);
     }
@@ -112,9 +155,9 @@ class _StudentFormPageState extends State<StudentFormPage> {
   @override
   void dispose() {
     _nameController.dispose();
-    _idController.dispose();
-    _emailController.dispose();
-    _divisionController.dispose();
+    _parentNameController.dispose();
+    _parentPhoneController.dispose();
+    _dobController.dispose();
     super.dispose();
   }
 }

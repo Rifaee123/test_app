@@ -30,7 +30,7 @@ class AdminSectionHeader extends StatelessWidget {
           key: testKey,
           onPressed: onAddPressed,
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
+            backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.1),
             foregroundColor: AppTheme.primaryColor,
             elevation: 0,
             padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),

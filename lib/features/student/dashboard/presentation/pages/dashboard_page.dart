@@ -152,7 +152,7 @@ class DashboardPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _buildInfoColumn('Parent / Guardian', student.parentName),
-              _buildInfoColumn('Academic Term', student.semester),
+              _buildInfoColumn('Academic Term', student.semester ?? 'N/A'),
             ],
           ),
         ],

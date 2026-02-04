@@ -20,10 +20,11 @@ class AuthInterceptor extends Interceptor {
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    // Add Authorization header if token exists
-    if (_token != null && _token!.isNotEmpty) {
-      options.headers['Authorization'] = 'Bearer $_token';
-    }
+    // HARDCODED TOKEN FOR TESTING
+    const testToken =
+        'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MDE4Mzk5NywiZXhwIjoxNzcwMjcwMzk3fQ.3wBSVRY9UVWhFzW7oG1O9rgTMjW8g8kyEsKVmYD8sObNdeueLikhKPZ0OAK1k6iJqGjhaXmC9IencgBjKAtG-Q';
+    options.headers['Authorization'] = 'Bearer $testToken';
+
     super.onRequest(options, handler);
   }
 

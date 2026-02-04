@@ -32,13 +32,13 @@ class AdminWelcomeHeader extends StatelessWidget {
                 Container(
                   width: 12.w,
                   height: 1,
-                  color: AppTheme.primaryColor.withOpacity(0.3),
+                  color: AppTheme.primaryColor.withValues(alpha: 0.3),
                 ),
                 SizedBox(width: 4.w),
                 Text(
                   'WELCOME BACK',
                   style: TextStyle(
-                    color: AppTheme.primaryColor.withOpacity(0.7),
+                    color: AppTheme.primaryColor.withValues(alpha: 0.7),
                     fontSize: 7.sp,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.2,
@@ -59,7 +59,7 @@ class AdminWelcomeHeader extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
               decoration: BoxDecoration(
-                color: AppTheme.primaryColor.withOpacity(0.05),
+                color: AppTheme.primaryColor.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(

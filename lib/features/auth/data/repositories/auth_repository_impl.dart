@@ -33,13 +33,15 @@ class AuthRepositoryImpl implements AuthRepository {
           id: 'STU1001',
           name: 'John Doe',
           email: 'john.doe@edu.com',
-          phone: '+1 234 567 890',
           address: '123 Education Lane, Tech City',
           semester: '6th Semester',
           attendance: 85.5,
           averageMarks: 78.4,
-          parentName: 'Jane Doe',
+          parentName: 'Rakhav',
+          parentPhone: '9876543210',
           division: 'A',
+          dateOfBirth: '2010-01-01',
+          subjects: ['English', 'Maths'],
         ),
       );
     }

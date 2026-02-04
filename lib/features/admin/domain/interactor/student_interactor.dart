@@ -2,6 +2,7 @@ import 'package:test_app/core/entities/student.dart';
 
 abstract class IStudentReader {
   Future<List<Student>> getStudents();
+  Future<Student> getStudentById(String id);
 }
 
 abstract class IStudentWriter {

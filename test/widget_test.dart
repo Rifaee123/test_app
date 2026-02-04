@@ -3,21 +3,21 @@ import 'package:mocktail/mocktail.dart';
 import 'package:test_app/core/di/injection.dart';
 import 'package:test_app/core/entities/teacher.dart';
 import 'package:test_app/features/admin/presentation/presenter/admin_presenter.dart';
-import 'package:test_app/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:test_app/features/auth/presentation/bloc/auth_state.dart';
+import 'package:test_app/features/auth/presentation/presenter/auth_bloc.dart';
+import 'package:test_app/features/auth/presentation/presenter/auth_state.dart';
 import 'package:test_app/main.dart';
 
 class MockAuthBloc extends Mock implements AuthBloc {}
 
-class MockAdminPresenter extends Mock implements AdminPresenter {}
+class MockAdminDashboardBloc extends Mock implements AdminDashboardBloc {}
 
 void main() {
   late MockAuthBloc mockAuthBloc;
-  late MockAdminPresenter mockAdminPresenter;
+  late MockAdminDashboardBloc mockAdminDashboardBloc;
 
   setUp(() {
     mockAuthBloc = MockAuthBloc();
-    mockAdminPresenter = MockAdminPresenter();
+    mockAdminDashboardBloc = MockAdminDashboardBloc();
 
     // Mock states to prevent BlocBuilder from breaking
     when(() => mockAuthBloc.state).thenReturn(AuthInitial());
@@ -29,13 +29,13 @@ void main() {
       subject: 'Math',
       department: 'Math',
     );
-    when(
-      () => mockAdminPresenter.state,
-    ).thenReturn(AdminLoaded(teacher: mockTeacher, students: const []));
+    when(() => mockAdminDashboardBloc.state).thenReturn(
+      AdminLoaded(teacher: mockTeacher, students: const [], stats: const []),
+    );
 
     sl.reset();
     sl.registerFactory<AuthBloc>(() => mockAuthBloc);
-    sl.registerFactory<AdminPresenter>(() => mockAdminPresenter);
+    sl.registerFactory<AdminDashboardBloc>(() => mockAdminDashboardBloc);
   });
 
   testWidgets('App loads admin home page', (WidgetTester tester) async {

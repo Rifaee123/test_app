@@ -6,6 +6,7 @@ import 'package:test_app/features/admin/domain/usecases/add_student.dart';
 import 'package:test_app/features/admin/domain/usecases/delete_student.dart';
 import 'package:test_app/features/admin/domain/usecases/get_admin_profile.dart';
 import 'package:test_app/features/admin/domain/usecases/get_students.dart';
+import 'package:test_app/features/admin/domain/usecases/get_student_by_id.dart';
 import 'package:test_app/features/admin/domain/usecases/update_student.dart';
 
 abstract class AdminInteractor
@@ -14,6 +15,7 @@ abstract class AdminInteractor
 class AdminInteractorImpl implements AdminInteractor {
   final GetAdminProfile _getAdminProfile;
   final GetStudents _getStudents;
+  final GetStudentById _getStudentById;
   final AddStudent _addStudent;
   final UpdateStudent _updateStudent;
   final DeleteStudent _deleteStudent;
@@ -21,11 +23,13 @@ class AdminInteractorImpl implements AdminInteractor {
   AdminInteractorImpl({
     required GetAdminProfile getAdminProfile,
     required GetStudents getStudents,
+    required GetStudentById getStudentById,
     required AddStudent addStudent,
     required UpdateStudent updateStudent,
     required DeleteStudent deleteStudent,
   }) : _getAdminProfile = getAdminProfile,
        _getStudents = getStudents,
+       _getStudentById = getStudentById,
        _addStudent = addStudent,
        _updateStudent = updateStudent,
        _deleteStudent = deleteStudent;
@@ -35,6 +39,9 @@ class AdminInteractorImpl implements AdminInteractor {
 
   @override
   Future<List<Student>> getStudents() => _getStudents();
+
+  @override
+  Future<Student> getStudentById(String id) => _getStudentById(id);
 
   @override
   Future<void> addStudent(Student student) => _addStudent(student);
