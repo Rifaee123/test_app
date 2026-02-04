@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:test_app/core/entities/student.dart';
-import 'package:test_app/core/test_ids.dart';
-import 'package:test_app/features/student/dashboard/presentation/router/dashboard_router.dart';
+import 'package:test_app/core/theme/app_theme.dart';
 
 class DashboardPage extends StatelessWidget {
   final Student student;
@@ -12,398 +11,471 @@ class DashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Semantics(
-          label: TestIds.dashboardTitle,
-          child: const Text('EduTrack Dashboard'),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () =>
-                DashboardRouter.navigateToProfile(context, student),
-            icon: const Icon(Icons.account_circle_outlined),
-          ),
-        ],
-      ),
+      drawer: _buildSidebar(context),
+      appBar: _buildAppBar(context),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(20.w),
+        padding: EdgeInsets.all(24.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildProfileHeader(context),
+            _buildBreadcrumbs(),
             SizedBox(height: 24.h),
-            _buildQuickStats(context),
-            SizedBox(height: 24.h),
-            Text(
-              'Academic Subjects',
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16.h),
-            _buildSubjectList(context),
-            SizedBox(height: 24.h),
-            Text(
-              'Quick Actions',
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16.h),
-            _buildActionGrid(context),
+            _buildLayout(context),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildProfileHeader(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Theme.of(context).primaryColor,
-            Theme.of(context).primaryColor.withValues(alpha: 0.8),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
+    return AppBar(
+      leading: Builder(
+        builder: (context) => IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () => Scaffold.of(context).openDrawer(),
         ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
       ),
+      title: const Text('Student Dashboard'),
+      actions: [
+        IconButton(
+          onPressed: () {},
+          icon: const Icon(Icons.search, color: AppTheme.darkTextColor),
+        ),
+        Stack(
+          children: [
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.notifications_outlined,
+                color: AppTheme.darkTextColor,
+              ),
+            ),
+            Positioned(
+              right: 12,
+              top: 12,
+              child: Container(
+                width: 8,
+                height: 8,
+                decoration: const BoxDecoration(
+                  color: AppTheme.mockupPrimary,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+          ],
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          child: CircleAvatar(
+            radius: 18,
+            backgroundColor: AppTheme.mockupPrimary.withValues(alpha: 0.2),
+            child: const Icon(Icons.person, size: 20, color: Colors.white),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSidebar(BuildContext context) {
+    return Drawer(
+      backgroundColor: AppTheme.darkSurface,
       child: Column(
         children: [
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 30,
-                backgroundColor: Colors.white.withValues(alpha: 0.2),
-                child: const Icon(Icons.person, color: Colors.white, size: 35),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
+          DrawerHeader(
+            decoration: const BoxDecoration(
+              border: Border(bottom: BorderSide(color: AppTheme.darkBorder)),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppTheme.mockupPrimary,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.school, color: Colors.white),
+                ),
+                SizedBox(width: 12.w),
+                const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      student.name,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      'EduTrack',
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
                       ),
                     ),
                     Text(
-                      'Student | A registered learner',
+                      'Academic Mgmt',
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.7),
+                        color: AppTheme.darkTextColor,
                         fontSize: 12,
                       ),
-                    ),
-                    Text(
-                      'ID: ${student.id} | Unique identifier',
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.7),
-                        fontSize: 11,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                      student.division,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                      ),
-                    ),
-                    const Text(
-                      'Academic Class',
-                      style: TextStyle(color: Colors.white, fontSize: 8),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Divider(color: Colors.white.withValues(alpha: 0.2)),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildInfoColumn('Parent / Guardian', student.parentName),
-              _buildInfoColumn('Academic Term', student.semester),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoColumn(String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.6),
-            fontSize: 12,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-            fontSize: 14,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSubjectList(BuildContext context) {
-    final subjects = [
-      {'name': 'Mathematics', 'grade': 'A', 'status': 'Excellent'},
-      {'name': 'Computer Science', 'grade': 'A+', 'status': 'Top Performer'},
-      {'name': 'Physics', 'grade': 'B', 'status': 'Good'},
-    ];
-
-    return SizedBox(
-      height: 100.h,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: subjects.length,
-        itemBuilder: (context, index) {
-          final sub = subjects[index];
-          return Container(
-            width: 160.w,
-            margin: const EdgeInsets.only(right: 16),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.grey.shade200),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  sub['name']!,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      sub['grade']!,
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      ),
-                    ),
-                    Text(
-                      sub['status']!,
-                      style: const TextStyle(color: Colors.grey, fontSize: 10),
                     ),
                   ],
                 ),
               ],
             ),
-          );
-        },
+          ),
+          _sidebarItem(Icons.dashboard, 'Dashboard', isActive: true),
+          _sidebarItem(Icons.menu_book, 'Curriculum'),
+          _sidebarItem(Icons.calendar_month, 'Events'),
+          _sidebarItem(Icons.analytics, 'Reports'),
+          _sidebarItem(Icons.person, 'Profile'),
+          const Spacer(),
+          const Divider(),
+          _sidebarItem(Icons.logout, 'Logout', color: Colors.redAccent),
+          SizedBox(height: 20.h),
+        ],
       ),
     );
   }
 
-  Widget _buildQuickStats(BuildContext context) {
+  Widget _sidebarItem(
+    IconData icon,
+    String title, {
+    bool isActive = false,
+    Color? color,
+  }) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+      decoration: BoxDecoration(
+        color: isActive ? AppTheme.darkBorder : Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+        border: isActive
+            ? const Border(
+                left: BorderSide(color: AppTheme.mockupPrimary, width: 4),
+              )
+            : null,
+      ),
+      child: ListTile(
+        leading: Icon(
+          icon,
+          color: isActive
+              ? AppTheme.mockupPrimary
+              : (color ?? AppTheme.darkTextColor),
+        ),
+        title: Text(
+          title,
+          style: TextStyle(
+            color: isActive ? Colors.white : (color ?? AppTheme.darkTextColor),
+            fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+        onTap: () {},
+      ),
+    );
+  }
+
+  Widget _buildBreadcrumbs() {
     return Row(
       children: [
-        Expanded(
-          child: _StatCard(
-            title: 'Attendance',
-            value: '${student.attendance}%',
-            color: Colors.blueAccent,
-            icon: Icons.calendar_today,
-          ),
-        ),
-        SizedBox(width: 16.w),
-        Expanded(
-          child: _StatCard(
-            title: 'Avg. Marks',
-            value: '${student.averageMarks}%',
-            color: Colors.green,
-            icon: Icons.analytics,
-          ),
-        ),
+        const Text('Home', style: TextStyle(color: AppTheme.darkTextColor)),
+        Icon(Icons.chevron_right, size: 16.sp, color: AppTheme.darkTextColor),
+        const Text('Dashboard', style: TextStyle(fontWeight: FontWeight.bold)),
       ],
     );
   }
 
-  Widget _buildActionGrid(BuildContext context) {
-    return GridView.count(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 2,
-      mainAxisSpacing: 16,
-      crossAxisSpacing: 16,
-      childAspectRatio: 1.1,
-      children: [
-        _ActionCard(
-          testId: TestIds.attendanceCard,
-          title: 'Attendance',
-          icon: Icons.check_circle_outline,
-          color: Colors.indigo,
-          onTap: () => DashboardRouter.navigateToAttendance(context),
-        ),
-        _ActionCard(
-          testId: TestIds.coursesCard,
-          title: 'Courses',
-          icon: Icons.book_outlined,
-          color: Colors.orange,
-          onTap: () => DashboardRouter.navigateToCourses(context),
-        ),
-        _ActionCard(
-          testId: TestIds.marksCard,
-          title: 'Marks',
-          icon: Icons.grade_outlined,
-          color: Colors.teal,
-          onTap: () => DashboardRouter.navigateToMarks(context),
-        ),
-        _ActionCard(
-          testId: TestIds.editProfileBtn,
-          title: 'Profile',
-          icon: Icons.person_outline,
-          color: Colors.purple,
-          onTap: () => DashboardRouter.navigateToProfile(context, student),
-        ),
-      ],
-    );
+  Widget _buildLayout(BuildContext context) {
+    if (MediaQuery.of(context).size.width > 900) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(flex: 1, child: _buildStudentProfileCard()),
+          SizedBox(width: 32.w),
+          Expanded(flex: 3, child: _buildSubjectOverview(context)),
+        ],
+      );
+    } else {
+      return Column(
+        children: [
+          _buildStudentProfileCard(),
+          SizedBox(height: 32.h),
+          _buildSubjectOverview(context),
+        ],
+      );
+    }
   }
-}
 
-class _StatCard extends StatelessWidget {
-  final String title;
-  final String value;
-  final Color color;
-  final IconData icon;
-
-  const _StatCard({
-    required this.title,
-    required this.value,
-    required this.color,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildStudentProfileCard() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(24.w),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: AppTheme.darkSurface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withValues(alpha: 0.2)),
+        border: Border.all(color: AppTheme.darkBorder),
+      ),
+      child: Column(
+        children: [
+          CircleAvatar(
+            radius: 48,
+            backgroundColor: AppTheme.mockupPrimary.withValues(alpha: 0.1),
+            child: const Icon(
+              Icons.person,
+              size: 50,
+              color: AppTheme.mockupPrimary,
+            ),
+          ),
+          SizedBox(height: 16.h),
+          Text(
+            student.name,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const Text(
+            'Status: Active',
+            style: TextStyle(
+              color: AppTheme.mockupPrimary,
+              fontWeight: FontWeight.bold,
+              fontSize: 13,
+            ),
+          ),
+          SizedBox(height: 24.h),
+          _profileDataRow('STUDENT ID', student.id),
+          _profileDataRow('GUARDIAN', student.parentName),
+          _profileDataRow('ACADEMIC YEAR', '2023-2024'),
+          _profileDataRow('CLASS', student.division),
+        ],
+      ),
+    );
+  }
+
+  Widget _profileDataRow(String label, String value) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 12.h),
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        border: Border(top: BorderSide(color: AppTheme.darkBorder)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: color),
-          const SizedBox(height: 12),
           Text(
-            value,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            label,
+            style: const TextStyle(
+              color: AppTheme.darkTextColor,
+              fontSize: 10,
               fontWeight: FontWeight.bold,
-              color: color,
+              letterSpacing: 1.2,
             ),
           ),
+          SizedBox(height: 4.h),
+          Text(value, style: const TextStyle(fontSize: 14)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSubjectOverview(BuildContext context) {
+    final subjects = [
+      {
+        'name': 'Malayalam',
+        'type': 'Language',
+        'icon': Icons.translate,
+        'color': Colors.indigo,
+        'count': '+24',
+      },
+      {
+        'name': 'English',
+        'type': 'Language',
+        'icon': Icons.description,
+        'color': Colors.blue,
+        'count': '+22',
+      },
+      {
+        'name': 'Hindi',
+        'type': 'Language',
+        'icon': Icons.language,
+        'color': Colors.orange,
+        'count': '+18',
+      },
+      {
+        'name': 'Physics',
+        'type': 'Science',
+        'icon': Icons.electric_bolt,
+        'color': Colors.red,
+        'count': '+30',
+      },
+      {
+        'name': 'Chemistry',
+        'type': 'Science',
+        'icon': Icons.science,
+        'color': Colors.teal,
+        'count': '+28',
+      },
+      {
+        'name': 'Biology',
+        'type': 'Science',
+        'icon': Icons.grass,
+        'color': Colors.green,
+        'count': '+26',
+      },
+      {
+        'name': 'Mathematics',
+        'type': 'Maths',
+        'icon': Icons.calculate,
+        'color': AppTheme.mockupPrimary,
+        'count': '+32',
+      },
+      {
+        'name': 'History',
+        'type': 'Arts',
+        'icon': Icons.history_edu,
+        'color': Colors.amber,
+        'count': '+20',
+      },
+      {
+        'name': 'Geography',
+        'type': 'Arts',
+        'icon': Icons.public,
+        'color': Colors.pink,
+        'count': '+21',
+      },
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Subject Overview',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            TextButton(
+              onPressed: () {},
+              child: const Text(
+                'View All Schedule',
+                style: TextStyle(color: AppTheme.mockupPrimary),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 16.h),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: MediaQuery.of(context).size.width > 600 ? 3 : 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 0.9,
+          ),
+          itemCount: subjects.length,
+          itemBuilder: (context, index) {
+            final sub = subjects[index];
+            return _buildSubjectCard(sub);
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSubjectCard(Map<String, dynamic> sub) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.darkSurface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppTheme.darkBorder),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: (sub['color'] as Color).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  sub['icon'] as IconData,
+                  color: sub['color'] as Color,
+                  size: 20,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppTheme.darkBorder,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  sub['type'] as String,
+                  style: const TextStyle(
+                    color: AppTheme.darkTextColor,
+                    fontSize: 9,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const Spacer(),
           Text(
-            title,
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(color: color),
+            sub['name'] as String,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+          const Spacer(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  _avatarStack(),
+                  SizedBox(width: 4.w),
+                  Text(
+                    sub['count'] as String,
+                    style: const TextStyle(
+                      color: AppTheme.darkTextColor,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              const Icon(
+                Icons.arrow_forward,
+                color: AppTheme.mockupPrimary,
+                size: 18,
+              ),
+            ],
           ),
         ],
       ),
     );
   }
-}
 
-class _ActionCard extends StatelessWidget {
-  final String testId;
-  final String title;
-  final IconData icon;
-  final Color color;
-  final VoidCallback onTap;
+  Widget _avatarStack() {
+    return SizedBox(
+      width: 35,
+      height: 20,
+      child: Stack(
+        children: [
+          Positioned(left: 0, child: _smallAvatar(Colors.blueGrey)),
+          Positioned(left: 10, child: _smallAvatar(Colors.grey)),
+        ],
+      ),
+    );
+  }
 
-  const _ActionCard({
-    required this.testId,
-    required this.title,
-    required this.icon,
-    required this.color,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      label: testId,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircleAvatar(
-                backgroundColor: color.withValues(alpha: 0.1),
-                child: Icon(icon, color: color),
-              ),
-              const SizedBox(height: 12),
-              Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-            ],
-          ),
-        ),
+  Widget _smallAvatar(Color color) {
+    return Container(
+      width: 20,
+      height: 20,
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+        border: Border.all(color: AppTheme.darkSurface, width: 2),
       ),
     );
   }
