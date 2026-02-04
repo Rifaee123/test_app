@@ -1,61 +1,76 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test_app/core/entities/student.dart';
+import 'package:test_app/core/entities/user.dart';
+import 'package:test_app/core/network/result.dart';
+import 'package:test_app/core/network/exceptions/network_exception.dart';
 import 'package:test_app/features/auth/domain/repositories/auth_repository.dart';
-import 'package:test_app/features/auth/domain/usecases/auth_interactor.dart';
+import 'package:test_app/features/auth/domain/usecases/login_usecase.dart';
+import 'package:test_app/features/auth/domain/value_objects/student_id.dart';
+import 'package:test_app/features/auth/domain/value_objects/password.dart';
 
 class MockAuthRepository extends Mock implements AuthRepository {}
 
 void main() {
-  late AuthInteractor interactor;
+  late LoginUseCase useCase;
   late MockAuthRepository mockRepository;
 
   setUp(() {
     mockRepository = MockAuthRepository();
-    interactor = AuthInteractor(mockRepository);
+    useCase = LoginUseCase(mockRepository);
   });
 
-  const tEmail = 'test@edu.com';
-  const tPassword = 'password123';
+  final tAuthId = StudentId.create('STU1001');
+  final tPassword = Password.create('password123');
   const tStudent = Student(
     id: '123',
     name: 'Test Student',
-    email: tEmail,
-    semester: 'S1',
-    division: 'A',
+    email: 'test@edu.com',
+    dateOfBirth: '2010-05-23',
     parentName: 'Parent',
+    parentPhone: '9876543210',
+    division: 'A',
+    subjects: ['English', 'Maths', 'Social', 'Malayalam'],
     attendance: 80,
     averageMarks: 85,
   );
 
   test(
-    'should return student from repository when login is successful',
+    'should return success with student when repository login succeeds',
     () async {
       // arrange
       when(
-        () => mockRepository.login(tEmail, tPassword),
-      ).thenAnswer((_) async => tStudent);
+        () => mockRepository.login(any(), any()),
+      ).thenAnswer((_) async => const Result.success(tStudent));
 
       // act
-      final result = await interactor.executeLogin(tEmail, tPassword);
+      final result = await useCase.execute(
+        authId: tAuthId,
+        password: tPassword,
+      );
 
       // assert
-      expect(result, tStudent);
-      verify(() => mockRepository.login(tEmail, tPassword)).called(1);
+      expect(result, const Result<User?>.success(tStudent));
+      verify(
+        () => mockRepository.login(tAuthId.value, tPassword.value),
+      ).called(1);
     },
   );
 
-  test('should return null when login fails', () async {
+  test('should return failure when repository login fails', () async {
     // arrange
+    const tException = ServerException(message: 'Invalid Credentials');
     when(
-      () => mockRepository.login(tEmail, tPassword),
-    ).thenAnswer((_) async => null);
+      () => mockRepository.login(any(), any()),
+    ).thenAnswer((_) async => const Result.failure(tException));
 
     // act
-    final result = await interactor.executeLogin(tEmail, tPassword);
+    final result = await useCase.execute(authId: tAuthId, password: tPassword);
 
     // assert
-    expect(result, null);
-    verify(() => mockRepository.login(tEmail, tPassword)).called(1);
+    expect(result, const Result<User?>.failure(tException));
+    verify(
+      () => mockRepository.login(tAuthId.value, tPassword.value),
+    ).called(1);
   });
 }

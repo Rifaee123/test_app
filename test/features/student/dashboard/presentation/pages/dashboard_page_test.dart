@@ -9,9 +9,11 @@ void main() {
     id: 'ET-2024-089',
     name: 'Alex Johnson',
     email: 'alex@edu.com',
-    semester: 'S1',
-    division: '10-A',
+    dateOfBirth: '2010-05-23',
     parentName: 'Sarah Johnson',
+    parentPhone: '9876543210',
+    division: '10-A',
+    subjects: ['English', 'Maths', 'Social', 'Malayalam'],
     attendance: 90,
     averageMarks: 88,
   );
@@ -46,6 +48,6 @@ void main() {
     expect(find.text('Subject Overview'), findsOneWidget);
     expect(find.text('Malayalam'), findsOneWidget);
     expect(find.text('English'), findsOneWidget);
-    expect(find.text('Physics'), findsOneWidget);
+    expect(find.text('Social'), findsOneWidget);
   });
 }

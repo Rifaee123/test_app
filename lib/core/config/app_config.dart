@@ -22,7 +22,7 @@ class AppConfig {
   /// Development configuration
   static const development = AppConfig(
     environment: Environment.development,
-    apiBaseUrl: 'https://dev-api.example.com',
+    apiBaseUrl: 'http://192.168.29.238:8081/api',
     enableLogging: true,
     maxRetries: 3,
   );

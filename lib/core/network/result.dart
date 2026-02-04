@@ -6,10 +6,10 @@ sealed class Result<T> {
   const Result();
 
   /// Creates a successful result with data
-  factory Result.success(T data) = Success<T>;
+  const factory Result.success(T data) = Success<T>;
 
   /// Creates a failed result with an exception
-  factory Result.failure(NetworkException exception) = Failure<T>;
+  const factory Result.failure(NetworkException exception) = Failure<T>;
 
   /// Returns true if this is a Success
   bool get isSuccess => this is Success<T>;

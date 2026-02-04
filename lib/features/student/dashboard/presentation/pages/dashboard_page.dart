@@ -237,6 +237,7 @@ class DashboardPage extends StatelessWidget {
           SizedBox(height: 24.h),
           _profileDataRow('STUDENT ID', student.id),
           _profileDataRow('GUARDIAN', student.parentName),
+          _profileDataRow('GUARDIAN PHONE', student.parentPhone),
           _profileDataRow('ACADEMIC YEAR', '2023-2024'),
           _profileDataRow('CLASS', student.division),
         ],
@@ -271,71 +272,7 @@ class DashboardPage extends StatelessWidget {
   }
 
   Widget _buildSubjectOverview(BuildContext context) {
-    final subjects = [
-      {
-        'name': 'Malayalam',
-        'type': 'Language',
-        'icon': Icons.translate,
-        'color': Colors.indigo,
-        'count': '+24',
-      },
-      {
-        'name': 'English',
-        'type': 'Language',
-        'icon': Icons.description,
-        'color': Colors.blue,
-        'count': '+22',
-      },
-      {
-        'name': 'Hindi',
-        'type': 'Language',
-        'icon': Icons.language,
-        'color': Colors.orange,
-        'count': '+18',
-      },
-      {
-        'name': 'Physics',
-        'type': 'Science',
-        'icon': Icons.electric_bolt,
-        'color': Colors.red,
-        'count': '+30',
-      },
-      {
-        'name': 'Chemistry',
-        'type': 'Science',
-        'icon': Icons.science,
-        'color': Colors.teal,
-        'count': '+28',
-      },
-      {
-        'name': 'Biology',
-        'type': 'Science',
-        'icon': Icons.grass,
-        'color': Colors.green,
-        'count': '+26',
-      },
-      {
-        'name': 'Mathematics',
-        'type': 'Maths',
-        'icon': Icons.calculate,
-        'color': AppTheme.mockupPrimary,
-        'count': '+32',
-      },
-      {
-        'name': 'History',
-        'type': 'Arts',
-        'icon': Icons.history_edu,
-        'color': Colors.amber,
-        'count': '+20',
-      },
-      {
-        'name': 'Geography',
-        'type': 'Arts',
-        'icon': Icons.public,
-        'color': Colors.pink,
-        'count': '+21',
-      },
-    ];
+    final subjectList = student.subjects;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -366,17 +303,36 @@ class DashboardPage extends StatelessWidget {
             mainAxisSpacing: 16,
             childAspectRatio: 0.9,
           ),
-          itemCount: subjects.length,
+          itemCount: subjectList.length,
           itemBuilder: (context, index) {
-            final sub = subjects[index];
-            return _buildSubjectCard(sub);
+            final subName = subjectList[index];
+            return _buildSubjectCard(subName);
           },
         ),
       ],
     );
   }
 
-  Widget _buildSubjectCard(Map<String, dynamic> sub) {
+  Widget _buildSubjectCard(String name) {
+    // Basic mapping for colors/icons based on name
+    IconData icon = Icons.book;
+    Color color = AppTheme.mockupPrimary;
+    String type = 'General';
+
+    if (name.contains('English') || name.contains('Malayalam')) {
+      icon = Icons.translate;
+      color = Colors.indigo;
+      type = 'Language';
+    } else if (name.contains('Maths')) {
+      icon = Icons.calculate;
+      color = Colors.teal;
+      type = 'Maths';
+    } else if (name.contains('Social') || name.contains('History')) {
+      icon = Icons.public;
+      color = Colors.orange;
+      type = 'Arts';
+    }
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -394,14 +350,10 @@ class DashboardPage extends StatelessWidget {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: (sub['color'] as Color).withValues(alpha: 0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
-                  sub['icon'] as IconData,
-                  color: sub['color'] as Color,
-                  size: 20,
-                ),
+                child: Icon(icon, color: color, size: 20),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -410,7 +362,7 @@ class DashboardPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
-                  sub['type'] as String,
+                  type,
                   style: const TextStyle(
                     color: AppTheme.darkTextColor,
                     fontSize: 9,
@@ -422,7 +374,7 @@ class DashboardPage extends StatelessWidget {
           ),
           const Spacer(),
           Text(
-            sub['name'] as String,
+            name,
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
           const Spacer(),
@@ -433,9 +385,9 @@ class DashboardPage extends StatelessWidget {
                 children: [
                   _avatarStack(),
                   SizedBox(width: 4.w),
-                  Text(
-                    sub['count'] as String,
-                    style: const TextStyle(
+                  const Text(
+                    '+12', // Placeholder count
+                    style: TextStyle(
                       color: AppTheme.darkTextColor,
                       fontSize: 10,
                       fontWeight: FontWeight.bold,

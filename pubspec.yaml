@@ -44,6 +44,7 @@ dependencies:
   percent_indicator: ^4.2.3
   flutter_svg: ^2.0.9
   dio: ^5.9.1
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:
