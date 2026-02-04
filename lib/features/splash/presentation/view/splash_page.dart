@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:test_app/core/test_ids.dart';
 import 'package:test_app/core/di/injection.dart';
 import 'package:test_app/core/theme/app_theme.dart';
 import 'package:test_app/features/splash/presentation/presenter/splash_bloc.dart';
@@ -29,7 +30,15 @@ class SplashPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Logo or Title
-                Icon(Icons.school_rounded, size: 80.sp, color: Colors.white),
+                Semantics(
+                  label: TestIds.splashLogo,
+                  container: true,
+                  child: Icon(
+                    Icons.school_rounded,
+                    size: 80.sp,
+                    color: Colors.white,
+                  ),
+                ),
                 SizedBox(height: 20.h),
                 Text(
                   'EduTrack',

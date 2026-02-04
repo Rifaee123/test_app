@@ -63,9 +63,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     } else {
       // Unauthenticated
       emit(SplashUnauthenticated());
-      _navigation.goToLogin(
-        isAdmin: false,
-      ); // Default to student login or generic
+      _navigation.goToLanding();
     }
   }
 }
