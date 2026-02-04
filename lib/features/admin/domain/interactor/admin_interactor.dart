@@ -1,5 +1,5 @@
 import 'package:test_app/core/entities/student.dart';
-import 'package:test_app/core/entities/teacher.dart';
+import 'package:test_app/core/entities/user.dart';
 import 'package:test_app/features/admin/domain/interactor/profile_interactor.dart';
 import 'package:test_app/features/admin/domain/interactor/student_interactor.dart';
 import 'package:test_app/features/admin/domain/usecases/add_student.dart';
@@ -35,7 +35,7 @@ class AdminInteractorImpl implements AdminInteractor {
        _deleteStudent = deleteStudent;
 
   @override
-  Future<Teacher> getProfile() => _getAdminProfile();
+  Future<User> getProfile() => _getAdminProfile();
 
   @override
   Future<List<Student>> getStudents() => _getStudents();

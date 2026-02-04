@@ -42,6 +42,7 @@ class StudentManagementBloc extends Bloc<AdminEvent, AdminState> {
   ) async {
     try {
       await _studentWriter.addStudent(event.student);
+      emit(StudentOperationSuccess(message: 'Student created successfully'));
     } catch (e) {
       emit(AdminError('Failed to add student'));
     }
@@ -53,6 +54,7 @@ class StudentManagementBloc extends Bloc<AdminEvent, AdminState> {
   ) async {
     try {
       await _studentWriter.updateStudent(event.student);
+      emit(StudentOperationSuccess(message: 'Student updated successfully'));
     } catch (e) {
       emit(AdminError('Failed to update student'));
     }
@@ -64,6 +66,7 @@ class StudentManagementBloc extends Bloc<AdminEvent, AdminState> {
   ) async {
     try {
       await _studentWriter.deleteStudent(event.studentId);
+      emit(StudentOperationSuccess(message: 'Student deleted successfully'));
     } catch (e) {
       emit(AdminError('Failed to delete student'));
     }

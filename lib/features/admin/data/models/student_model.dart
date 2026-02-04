@@ -63,6 +63,17 @@ class StudentModel extends Student {
     };
   }
 
+  /// Returns JSON for creating/updating a student via API
+  Map<String, dynamic> toApiJson() {
+    return {
+      'name': name,
+      'dateOfBirth': dateOfBirth,
+      'parentName': parentName,
+      'parentPhone': parentPhone,
+      'division': division,
+    };
+  }
+
   Student toEntity() {
     return Student(
       id: id,

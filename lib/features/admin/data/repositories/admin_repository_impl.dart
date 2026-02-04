@@ -1,28 +1,22 @@
 import 'package:test_app/core/entities/student.dart';
-import 'package:test_app/core/entities/teacher.dart';
+import 'package:test_app/core/entities/user.dart';
 import 'package:test_app/core/network/network_service.dart';
 import 'package:test_app/core/network/result.dart';
 import 'package:test_app/features/admin/data/models/student_model.dart';
 import 'package:test_app/features/admin/domain/repositories/admin_repository.dart';
 import 'package:test_app/features/admin/data/repositories/admin_api_constants.dart';
 
+import 'package:test_app/features/admin/data/datasources/admin_local_data_source.dart';
+
 class AdminRepositoryImpl implements AdminRepository {
   final NetworkService _networkService;
+  final AdminLocalDataSource _localDataSource;
 
-  AdminRepositoryImpl(this._networkService);
-
-  final Teacher _mockTeacher = const Teacher(
-    id: 'TCH2001',
-    name: 'Dr. Sarah Wilson',
-    email: 'sarah.wilson@edu.com',
-    subject: 'Computer Science',
-    department: 'Engineering',
-  );
+  AdminRepositoryImpl(this._networkService, this._localDataSource);
 
   @override
-  Future<Teacher> getAdminProfile() async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    return _mockTeacher;
+  Future<User> getAdminProfile() async {
+    return _localDataSource.getAdminProfile();
   }
 
   @override
@@ -59,14 +53,52 @@ class AdminRepositoryImpl implements AdminRepository {
 
   @override
   Future<void> addStudent(Student student) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    // No-op for now as we focus on fetching
+    final model = StudentModel(
+      id: student.id,
+      name: student.name,
+      email: student.email,
+      parentPhone: student.parentPhone,
+      address: student.address,
+      semester: student.semester,
+      attendance: student.attendance,
+      averageMarks: student.averageMarks,
+      parentName: student.parentName,
+      division: student.division,
+      dateOfBirth: student.dateOfBirth,
+      subjects: student.subjects,
+    );
+
+    final result = await _networkService.post(
+      AdminApiConstants.students,
+      data: model.toApiJson(),
+    );
+
+    result.fold((exception) => throw exception, (data) => null);
   }
 
   @override
   Future<void> updateStudent(Student student) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    // No-op for now as we focus on fetching
+    final model = StudentModel(
+      id: student.id,
+      name: student.name,
+      email: student.email,
+      parentPhone: student.parentPhone,
+      address: student.address,
+      semester: student.semester,
+      attendance: student.attendance,
+      averageMarks: student.averageMarks,
+      parentName: student.parentName,
+      division: student.division,
+      dateOfBirth: student.dateOfBirth,
+      subjects: student.subjects,
+    );
+
+    final result = await _networkService.put(
+      AdminApiConstants.studentDetail(student.id),
+      data: model.toApiJson(),
+    );
+
+    result.fold((exception) => throw exception, (data) => null);
   }
 
   @override

@@ -65,3 +65,12 @@ class StudentDetailLoaded extends AdminState {
   @override
   List<Object?> get props => [student];
 }
+
+class StudentOperationSuccess extends AdminState {
+  final String message;
+
+  StudentOperationSuccess({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}

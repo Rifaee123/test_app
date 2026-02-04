@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter/services.dart';
 import 'package:test_app/core/entities/student.dart';
 import 'package:test_app/features/admin/presentation/presenter/admin_presenter.dart';
 import 'package:test_app/features/admin/presentation/view/admin_keys.dart';
+import 'package:test_app/features/admin/domain/validation/student_validator.dart';
 
 class StudentFormPage extends StatefulWidget {
   final Student? student;
@@ -49,77 +51,137 @@ class _StudentFormPageState extends State<StudentFormPage> {
     return Scaffold(
       key: AdminKeys.studentFormView,
       appBar: AppBar(title: Text(isEditing ? 'Edit Student' : 'Add Student')),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(20.w),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                key: AdminKeys.studentNameInput,
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Full Name',
-                  hintText: 'e.g. Kaju',
+      body: BlocListener<StudentManagementBloc, AdminState>(
+        listener: (context, state) {
+          if (state is StudentOperationSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.green,
+              ),
+            );
+            Navigator.pop(context, true); // Return true to trigger refresh
+          } else if (state is AdminError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        },
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(20.w),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                Semantics(
+                  label: 'Student Name Input Field',
+                  hint: 'Enter the full name of the student',
+                  child: TextFormField(
+                    key: AdminKeys.studentNameInput,
+                    controller: _nameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Full Name',
+                      hintText: 'e.g. Kaju',
+                    ),
+                    validator: (v) =>
+                        StudentValidator.validateName(v, 'Full Name'),
+                  ),
                 ),
-                validator: (v) => v!.isEmpty ? 'Required' : null,
-              ),
-              SizedBox(height: 16.h),
-              TextFormField(
-                key: AdminKeys.studentDobInput,
-                controller: _dobController,
-                decoration: const InputDecoration(
-                  labelText: 'Date of Birth',
-                  hintText: 'YYYY-MM-DD (e.g. 2010-05-23)',
+                SizedBox(height: 16.h),
+                Semantics(
+                  label: 'Date of Birth Input Field',
+                  hint: 'Enter date in YYYY-MM-DD format',
+                  child: TextFormField(
+                    key: AdminKeys.studentDobInput,
+                    controller: _dobController,
+                    decoration: const InputDecoration(
+                      labelText: 'Date of Birth',
+                      hintText: 'YYYY-MM-DD (e.g. 2010-05-23)',
+                    ),
+                    validator: StudentValidator.validateDateOfBirth,
+                  ),
                 ),
-                validator: (v) => v!.isEmpty ? 'Required' : null,
-              ),
-              SizedBox(height: 16.h),
-              TextFormField(
-                key: AdminKeys.studentParentNameInput,
-                controller: _parentNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Parent Name',
-                  hintText: 'e.g. Rakhav',
+                SizedBox(height: 16.h),
+                Semantics(
+                  label: 'Parent Name Input Field',
+                  hint: 'Enter the name of the parent',
+                  child: TextFormField(
+                    key: AdminKeys.studentParentNameInput,
+                    controller: _parentNameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Parent Name',
+                      hintText: 'e.g. Rakhav',
+                    ),
+                    validator: (v) =>
+                        StudentValidator.validateName(v, 'Parent Name'),
+                  ),
                 ),
-                validator: (v) => v!.isEmpty ? 'Required' : null,
-              ),
-              SizedBox(height: 16.h),
-              TextFormField(
-                key: AdminKeys.studentParentPhoneInput,
-                controller: _parentPhoneController,
-                decoration: const InputDecoration(
-                  labelText: 'Parent Phone',
-                  hintText: 'e.g. 9876543210',
+                SizedBox(height: 16.h),
+                Semantics(
+                  label: 'Parent Phone Input Field',
+                  hint: 'Enter 10 digit phone number',
+                  child: TextFormField(
+                    key: AdminKeys.studentParentPhoneInput,
+                    controller: _parentPhoneController,
+                    decoration: const InputDecoration(
+                      labelText: 'Parent Phone',
+                      hintText: 'e.g. 9876543210',
+                    ),
+                    validator: StudentValidator.validatePhone,
+                    keyboardType: TextInputType.phone,
+                    maxLength: 10,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  ),
                 ),
-                validator: (v) => v!.isEmpty ? 'Required' : null,
-                keyboardType: TextInputType.phone,
-              ),
-              SizedBox(height: 16.h),
-              DropdownButtonFormField<String>(
-                key: AdminKeys.studentGradeInput,
-                initialValue: _selectedDivision,
-                decoration: const InputDecoration(labelText: 'Division'),
-                items: _divisions.map((String division) {
-                  return DropdownMenuItem<String>(
-                    value: division,
-                    child: Text(division),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedDivision = newValue;
-                  });
-                },
-                validator: (v) => v == null ? 'Required' : null,
-              ),
-              SizedBox(height: 32.h),
-              ElevatedButton(
-                key: AdminKeys.saveStudentBtn,
-                onPressed: _save,
-                child: Text(isEditing ? 'Update Student' : 'Save Student'),
-              ),
-            ],
+                SizedBox(height: 16.h),
+                Semantics(
+                  label: 'Division Selector',
+                  hint: 'Select student division (A, B, or C)',
+                  child: DropdownButtonFormField<String>(
+                    key: AdminKeys.studentGradeInput,
+                    initialValue: _selectedDivision,
+                    decoration: const InputDecoration(labelText: 'Division'),
+                    items: _divisions.map((String division) {
+                      return DropdownMenuItem<String>(
+                        value: division,
+                        child: Text(division),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedDivision = newValue;
+                      });
+                    },
+                    validator: (v) => v == null ? 'Required' : null,
+                  ),
+                ),
+                SizedBox(height: 32.h),
+                BlocBuilder<StudentManagementBloc, AdminState>(
+                  builder: (context, state) {
+                    if (state is AdminLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    return Semantics(
+                      label: isEditing
+                          ? 'Update Student Button'
+                          : 'Save Student Button',
+                      button: true,
+                      enabled: state is! AdminLoading,
+                      child: ElevatedButton(
+                        key: AdminKeys.saveStudentBtn,
+                        onPressed: _save,
+                        child: Text(
+                          isEditing ? 'Update Student' : 'Save Student',
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -148,7 +210,6 @@ class _StudentFormPageState extends State<StudentFormPage> {
       } else {
         context.read<StudentManagementBloc>().add(AddStudentEvent(student));
       }
-      Navigator.pop(context);
     }
   }
 

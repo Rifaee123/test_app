@@ -9,8 +9,8 @@ import 'package:test_app/features/admin/presentation/view/pages/student_form_pag
 
 abstract class IAdminRouter {
   void navigateToAdminHome(BuildContext context);
-  void navigateToStudentDetail(BuildContext context, Student student);
-  void navigateToStudentForm(BuildContext context, {Student? student});
+  Future<bool?> navigateToStudentDetail(BuildContext context, Student student);
+  Future<bool?> navigateToStudentForm(BuildContext context, {Student? student});
   void pop(BuildContext context);
   Future<bool?> confirmDeleteStudent(BuildContext context, String studentName);
 }
@@ -31,8 +31,8 @@ class AdminRouterImpl implements IAdminRouter {
   }
 
   @override
-  void navigateToStudentDetail(BuildContext context, Student student) {
-    Navigator.push(
+  Future<bool?> navigateToStudentDetail(BuildContext context, Student student) {
+    return Navigator.push<bool?>(
       context,
       MaterialPageRoute(
         builder: (context) => BlocProvider(
@@ -46,8 +46,11 @@ class AdminRouterImpl implements IAdminRouter {
   }
 
   @override
-  void navigateToStudentForm(BuildContext context, {Student? student}) {
-    Navigator.push(
+  Future<bool?> navigateToStudentForm(
+    BuildContext context, {
+    Student? student,
+  }) {
+    return Navigator.push<bool?>(
       context,
       MaterialPageRoute(
         builder: (context) => BlocProvider(

@@ -47,10 +47,16 @@ class AdminStudentCard extends StatelessWidget {
             border: Border.all(color: Colors.grey.shade100, width: 1),
           ),
           child: InkWell(
-            onTap: () => context
-                .read<AdminDashboardBloc>()
-                .router
-                .navigateToStudentDetail(context, student),
+            onTap: () async {
+              final shouldRefresh = await context
+                  .read<AdminDashboardBloc>()
+                  .router
+                  .navigateToStudentDetail(context, student);
+
+              if (shouldRefresh == true && context.mounted) {
+                context.read<AdminDashboardBloc>().add(LoadAdminDataEvent());
+              }
+            },
             borderRadius: BorderRadius.circular(10),
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
@@ -112,10 +118,18 @@ class AdminStudentCard extends StatelessWidget {
                     testKey: ValueKey(AdminKeys.editStudentBtn(student.id)),
                     icon: Icons.edit_rounded,
                     color: Colors.blue.shade600,
-                    onPressed: () => context
-                        .read<AdminDashboardBloc>()
-                        .router
-                        .navigateToStudentForm(context, student: student),
+                    onPressed: () async {
+                      final shouldRefresh = await context
+                          .read<AdminDashboardBloc>()
+                          .router
+                          .navigateToStudentForm(context, student: student);
+
+                      if (shouldRefresh == true && context.mounted) {
+                        context.read<AdminDashboardBloc>().add(
+                          LoadAdminDataEvent(),
+                        );
+                      }
+                    },
                   ),
                   SizedBox(width: 8.w),
                   _AnimatedActionButton(

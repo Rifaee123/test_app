@@ -27,7 +27,7 @@ class AdminHomePage extends StatelessWidget {
           if (state is AdminLoading) {
             return _buildLoadingState(context);
           } else if (state is AdminLoaded) {
-            final user = state.user;
+            final user = admin ?? state.user;
             final students = state.students;
             return CustomScrollView(
               slivers: [
@@ -45,10 +45,18 @@ class AdminHomePage extends StatelessWidget {
                         AdminSectionHeader(
                           testKey: AdminKeys.addStudentBtn,
                           title: 'Students Management',
-                          onAddPressed: () => context
-                              .read<AdminDashboardBloc>()
-                              .router
-                              .navigateToStudentForm(context),
+                          onAddPressed: () async {
+                            final shouldRefresh = await context
+                                .read<AdminDashboardBloc>()
+                                .router
+                                .navigateToStudentForm(context);
+
+                            if (shouldRefresh == true && context.mounted) {
+                              context.read<AdminDashboardBloc>().add(
+                                LoadAdminDataEvent(),
+                              );
+                            }
+                          },
                         ),
                         SizedBox(height: 2.h),
                       ],
@@ -129,8 +137,18 @@ class AdminHomePage extends StatelessWidget {
         titlePadding: EdgeInsets.only(left: 10.w, bottom: 8.h),
       ),
       actions: [
-        _AppBarAction(icon: Icons.notifications_rounded, onPressed: () {}),
-        _AppBarAction(icon: Icons.person_rounded, onPressed: () {}),
+        _AppBarAction(
+          label: 'Notifications Button',
+          hint: 'View notifications',
+          icon: Icons.notifications_rounded,
+          onPressed: () {},
+        ),
+        _AppBarAction(
+          label: 'Profile Button',
+          hint: 'View profile settings',
+          icon: Icons.person_rounded,
+          onPressed: () {},
+        ),
         SizedBox(width: 10.w),
       ],
     );
@@ -197,8 +215,15 @@ class AdminHomePage extends StatelessWidget {
 class _AppBarAction extends StatelessWidget {
   final IconData icon;
   final VoidCallback onPressed;
+  final String label;
+  final String hint;
 
-  const _AppBarAction({required this.icon, required this.onPressed});
+  const _AppBarAction({
+    required this.icon,
+    required this.onPressed,
+    required this.label,
+    required this.hint,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -209,11 +234,16 @@ class _AppBarAction extends StatelessWidget {
           color: Colors.white.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: IconButton(
-          onPressed: onPressed,
-          constraints: BoxConstraints.tightFor(width: 24.w, height: 24.h),
-          padding: EdgeInsets.zero,
-          icon: Icon(icon, color: Colors.white, size: 14.sp),
+        child: Semantics(
+          label: label,
+          hint: hint,
+          button: true,
+          child: IconButton(
+            onPressed: onPressed,
+            constraints: BoxConstraints.tightFor(width: 24.w, height: 24.h),
+            padding: EdgeInsets.zero,
+            icon: Icon(icon, color: Colors.white, size: 14.sp),
+          ),
         ),
       ),
     );

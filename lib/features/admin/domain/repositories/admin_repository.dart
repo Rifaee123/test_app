@@ -1,8 +1,8 @@
 import 'package:test_app/core/entities/student.dart';
-import 'package:test_app/core/entities/teacher.dart';
+import 'package:test_app/core/entities/user.dart';
 
 abstract class IProfileRepository {
-  Future<Teacher> getAdminProfile();
+  Future<User> getAdminProfile();
 }
 
 abstract class IStudentRepositoryReader {

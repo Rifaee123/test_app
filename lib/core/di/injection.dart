@@ -5,6 +5,7 @@ import 'package:test_app/core/network/dio_network_service.dart';
 import 'package:test_app/core/network/interceptor_provider.dart';
 import 'package:test_app/core/network/interceptors/auth_interceptor.dart';
 import 'package:test_app/core/network/network_service.dart';
+import 'package:test_app/features/admin/data/datasources/admin_local_data_source.dart';
 import 'package:test_app/features/admin/data/repositories/admin_repository_impl.dart';
 import 'package:test_app/features/admin/domain/interactor/admin_interactor.dart';
 import 'package:test_app/features/admin/domain/repositories/admin_repository.dart';
@@ -147,8 +148,15 @@ Future<void> initDI() async {
   sl.registerLazySingleton(() => UpdateStudent(sl()));
   sl.registerLazySingleton(() => DeleteStudent(sl()));
 
+  // Data Sources
+  sl.registerLazySingleton<AdminLocalDataSource>(
+    () => AdminLocalDataSourceImpl(),
+  );
+
   // Repository
-  sl.registerLazySingleton<AdminRepository>(() => AdminRepositoryImpl(sl()));
+  sl.registerLazySingleton<AdminRepository>(
+    () => AdminRepositoryImpl(sl(), sl()),
+  );
   sl.registerLazySingleton<IProfileRepository>(() => sl<AdminRepository>());
   sl.registerLazySingleton<IStudentRepositoryReader>(
     () => sl<AdminRepository>(),

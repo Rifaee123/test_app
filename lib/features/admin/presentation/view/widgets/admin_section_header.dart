@@ -26,24 +26,29 @@ class AdminSectionHeader extends StatelessWidget {
             fontSize: 10.sp,
           ),
         ),
-        ElevatedButton.icon(
-          key: testKey,
-          onPressed: onAddPressed,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.1),
-            foregroundColor: AppTheme.primaryColor,
-            elevation: 0,
-            padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-            minimumSize: Size.zero,
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(6),
+        Semantics(
+          label: 'Add New Student Button',
+          button: true,
+          hint: 'Navigates to the form to add a new student',
+          child: ElevatedButton.icon(
+            key: testKey,
+            onPressed: onAddPressed,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.1),
+              foregroundColor: AppTheme.primaryColor,
+              elevation: 0,
+              padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
             ),
-          ),
-          icon: Icon(Icons.add_circle_outline_rounded, size: 10.sp),
-          label: Text(
-            'Add Student',
-            style: TextStyle(fontSize: 7.sp, fontWeight: FontWeight.w900),
+            icon: Icon(Icons.add_circle_outline_rounded, size: 10.sp),
+            label: Text(
+              'Add Student',
+              style: TextStyle(fontSize: 7.sp, fontWeight: FontWeight.w900),
+            ),
           ),
         ),
       ],

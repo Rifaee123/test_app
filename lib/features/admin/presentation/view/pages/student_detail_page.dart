@@ -16,6 +16,8 @@ class StudentDetailPage extends StatefulWidget {
 }
 
 class _StudentDetailPageState extends State<StudentDetailPage> {
+  bool _hasUpdated = false;
+
   @override
   void initState() {
     super.initState();
@@ -40,8 +42,32 @@ class _StudentDetailPageState extends State<StudentDetailPage> {
             title: const Text('Student Details'),
             leading: BackButton(
               key: AdminKeys.backButton,
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(context, _hasUpdated),
             ),
+            actions: [
+              Semantics(
+                label: 'Edit Student Button',
+                button: true,
+                hint: 'Navigate to edit student form',
+                child: IconButton(
+                  key: ValueKey(AdminKeys.editStudentBtn(student.id)),
+                  icon: const Icon(Icons.edit),
+                  onPressed: () async {
+                    final shouldRefresh = await context
+                        .read<AdminDashboardBloc>()
+                        .router
+                        .navigateToStudentForm(context, student: student);
+
+                    if (shouldRefresh == true && context.mounted) {
+                      _hasUpdated = true;
+                      context.read<StudentManagementBloc>().add(
+                        LoadStudentDetailEvent(student.id),
+                      );
+                    }
+                  },
+                ),
+              ),
+            ],
           ),
           body: Semantics(
             label: 'Student detailed information scroll view',
@@ -152,37 +178,41 @@ class _InfoTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 16.h),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: AppTheme.primaryColor, size: 20),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: AppTheme.softTextColor,
+    return Semantics(
+      label: '$label: $value',
+      readOnly: true,
+      child: Container(
+        margin: EdgeInsets.only(bottom: 16.h),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey.shade200),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: AppTheme.primaryColor, size: 20),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppTheme.softTextColor,
+                    ),
                   ),
-                ),
-                Text(
-                  value,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
-                ),
-              ],
+                  Text(
+                    value,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
