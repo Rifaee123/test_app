@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:test_app/features/auth/presentation/view/auth_keys.dart';
 import 'package:test_app/features/auth/presentation/presenter/auth_bloc.dart';
 import 'package:test_app/features/auth/presentation/presenter/auth_event.dart';
 
@@ -9,6 +10,7 @@ class LandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: AuthKeys.landingPage,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -38,6 +40,7 @@ class LandingPage extends StatelessWidget {
               ),
               const SizedBox(height: 64),
               ElevatedButton(
+                key: AuthKeys.loginButton,
                 onPressed: () {
                   context.read<AuthBloc>().add(
                     const NavigateToLoginRequested(isAdmin: false),
@@ -47,6 +50,7 @@ class LandingPage extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               OutlinedButton(
+                key: AuthKeys.registerButton,
                 onPressed: () {
                   context.read<AuthBloc>().add(
                     const NavigateToLoginRequested(isAdmin: true),

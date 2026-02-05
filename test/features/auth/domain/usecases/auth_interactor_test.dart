@@ -40,19 +40,20 @@ void main() {
     () async {
       // arrange
       when(
-        () => mockRepository.login(any(), any()),
+        () => mockRepository.login(any(), any(), any()),
       ).thenAnswer((_) async => const Result.success(tStudent));
 
       // act
       final result = await useCase.execute(
         authId: tAuthId,
         password: tPassword,
+        role: 'STUDENT',
       );
 
       // assert
       expect(result, const Result<User?>.success(tStudent));
       verify(
-        () => mockRepository.login(tAuthId.value, tPassword.value),
+        () => mockRepository.login(tAuthId.value, tPassword.value, 'STUDENT'),
       ).called(1);
     },
   );
@@ -61,16 +62,20 @@ void main() {
     // arrange
     const tException = ServerException(message: 'Invalid Credentials');
     when(
-      () => mockRepository.login(any(), any()),
+      () => mockRepository.login(any(), any(), any()),
     ).thenAnswer((_) async => const Result.failure(tException));
 
     // act
-    final result = await useCase.execute(authId: tAuthId, password: tPassword);
+    final result = await useCase.execute(
+      authId: tAuthId,
+      password: tPassword,
+      role: 'STUDENT',
+    );
 
     // assert
     expect(result, const Result<User?>.failure(tException));
     verify(
-      () => mockRepository.login(tAuthId.value, tPassword.value),
+      () => mockRepository.login(tAuthId.value, tPassword.value, 'STUDENT'),
     ).called(1);
   });
 }

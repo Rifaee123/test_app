@@ -12,9 +12,10 @@ class LoginUseCase {
   Future<Result<User?>> execute({
     required AuthId authId,
     required Password password,
+    required String role,
   }) {
     // Open/Closed Principle: No need to check for specific ID types.
-    // We just pass the value to the repository.
-    return _repository.login(authId.value, password.value);
+    // We just pass the values to the repository.
+    return _repository.login(authId.value, password.value, role);
   }
 }

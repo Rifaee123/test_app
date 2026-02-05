@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:test_app/core/di/injection.dart';
 import 'package:test_app/core/theme/app_theme.dart';
+import 'package:test_app/features/admin/presentation/presenter/admin_presenter.dart';
 import 'package:test_app/features/auth/presentation/presenter/auth_bloc.dart';
-import 'package:test_app/features/auth/presentation/view/landing_page.dart';
+import 'package:test_app/features/splash/presentation/view/splash_page.dart';
 import 'package:test_app/core/services/navigation_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SemanticsBinding.instance.ensureSemantics();
   await initDI();
 
   runApp(const EduTrackApp());
@@ -25,7 +28,13 @@ class EduTrackApp extends StatelessWidget {
       splitScreenMode: true,
       builder: (context, child) {
         return MultiBlocProvider(
-          providers: [BlocProvider(create: (_) => sl<AuthBloc>())],
+          providers: [
+            BlocProvider(create: (_) => sl<AuthBloc>()),
+            BlocProvider(
+              create: (context) =>
+                  sl<AdminPresenter>()..add(LoadAdminDataEvent()),
+            ),
+          ],
           child: MaterialApp(
             title: 'EduTrack',
             navigatorKey: sl<NavigationService>().navigatorKey,
@@ -33,7 +42,7 @@ class EduTrackApp extends StatelessWidget {
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: ThemeMode.dark,
-            home: const LandingPage(),
+            home: const SplashPage(),
           ),
         );
       },

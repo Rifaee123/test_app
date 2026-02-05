@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test_app/core/entities/course.dart';
-import 'package:test_app/core/test_ids.dart';
+import 'package:test_app/features/student/courses/presentation/pages/courses_keys.dart';
 
 class CoursesPage extends StatefulWidget {
   const CoursesPage({super.key});
@@ -39,36 +39,31 @@ class _CoursesPageState extends State<CoursesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: CoursesKeys.coursesPage,
       appBar: AppBar(title: const Text('Available Courses')),
-      body: Semantics(
-        label: TestIds.courseList,
-        child: ListView.separated(
-          padding: const EdgeInsets.all(16),
-          itemCount: _courses.length,
-          separatorBuilder: (context, index) => const SizedBox(height: 12),
-          itemBuilder: (context, index) {
-            final course = _courses[index];
-            return Card(
-              child: ListTile(
-                title: Text(course.name),
-                subtitle: Text('Instructor: ${course.instructor}'),
-                trailing: Semantics(
-                  label: TestIds.enrollButton,
-                  child: ElevatedButton(
-                    onPressed: course.isEnrolled
-                        ? null
-                        : () => _enroll(course.id),
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(80, 36),
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                    ),
-                    child: Text(course.isEnrolled ? 'Enrolled' : 'Enroll'),
-                  ),
+      body: ListView.separated(
+        key: CoursesKeys.courseList,
+        padding: const EdgeInsets.all(16),
+        itemCount: _courses.length,
+        separatorBuilder: (context, index) => const SizedBox(height: 12),
+        itemBuilder: (context, index) {
+          final course = _courses[index];
+          return Card(
+            key: ValueKey(CoursesKeys.courseItem(index)),
+            child: ListTile(
+              title: Text(course.name),
+              subtitle: Text('Instructor: ${course.instructor}'),
+              trailing: ElevatedButton(
+                onPressed: course.isEnrolled ? null : () => _enroll(course.id),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(80, 36),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                 ),
+                child: Text(course.isEnrolled ? 'Enrolled' : 'Enroll'),
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

@@ -48,12 +48,17 @@ void main() {
           () => mockInteractor.executeLogin(
             authId: any(named: 'authId'),
             password: any(named: 'password'),
+            role: any(named: 'role'),
           ),
         ).thenAnswer((_) async => const Result.success(tStudent));
         return authBloc;
       },
       act: (bloc) => bloc.add(
-        const LoginRequested('alex@edu.com', 'password', isAdmin: false),
+        const LoginRequested(
+          studentId: 'alex@edu.com',
+          password: 'password',
+          isAdmin: false,
+        ),
       ),
       expect: () => [AuthLoading(), const AuthAuthenticated(tStudent)],
     );
@@ -65,6 +70,7 @@ void main() {
           () => mockInteractor.executeLogin(
             authId: any(named: 'authId'),
             password: any(named: 'password'),
+            role: any(named: 'role'),
           ),
         ).thenAnswer(
           (_) async => const Result.failure(
@@ -74,7 +80,11 @@ void main() {
         return authBloc;
       },
       act: (bloc) => bloc.add(
-        const LoginRequested('wrong@edu.com', 'password', isAdmin: false),
+        const LoginRequested(
+          studentId: 'wrong@edu.com',
+          password: 'password',
+          isAdmin: false,
+        ),
       ),
       expect: () => [AuthLoading(), const AuthError('Invalid Credentials')],
     );

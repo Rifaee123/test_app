@@ -2,6 +2,7 @@ import 'package:test_app/core/entities/user.dart';
 
 class Student extends User {
   // id, name, email are in User base class
+  final String? token; // Authentication token
   final String dateOfBirth;
   final String parentName;
   final String parentPhone;
@@ -17,6 +18,7 @@ class Student extends User {
     required super.id,
     required super.name,
     required super.email,
+    this.token,
     required this.dateOfBirth,
     required this.parentName,
     required this.parentPhone,
@@ -30,8 +32,12 @@ class Student extends User {
   });
 
   @override
+  String get role => 'STUDENT';
+
+  @override
   List<Object?> get props => [
     ...super.props,
+    token,
     dateOfBirth,
     parentName,
     parentPhone,
@@ -46,6 +52,7 @@ class Student extends User {
 
   Student copyWith({
     String? name,
+    String? token,
     String? dateOfBirth,
     String? parentName,
     String? parentPhone,
@@ -53,11 +60,15 @@ class Student extends User {
     List<String>? subjects,
     String? phone,
     String? address,
+    String? semester,
+    double? attendance,
+    double? averageMarks,
   }) {
     return Student(
       id: id,
       name: name ?? this.name,
       email: email,
+      token: token ?? this.token,
       dateOfBirth: dateOfBirth ?? this.dateOfBirth,
       parentName: parentName ?? this.parentName,
       parentPhone: parentPhone ?? this.parentPhone,
@@ -65,9 +76,9 @@ class Student extends User {
       subjects: subjects ?? this.subjects,
       phone: phone ?? this.phone,
       address: address ?? this.address,
-      semester: semester,
-      attendance: attendance,
-      averageMarks: averageMarks,
+      semester: semester ?? this.semester,
+      attendance: attendance ?? this.attendance,
+      averageMarks: averageMarks ?? this.averageMarks,
     );
   }
 }

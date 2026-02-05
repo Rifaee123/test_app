@@ -9,7 +9,7 @@ import 'auth_event.dart';
 import 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final AuthInteractor interactor;
+  final IAuthInteractor interactor;
 
   AuthBloc(this.interactor) : super(AuthInitial()) {
     on<LoginRequested>(_onLoginRequested);
@@ -30,28 +30,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(AuthLoading());
     try {
-      // Validation Logic moved to Bloc
+      // Determine role based on isAdmin flag
+      final String role = event.isAdmin ? 'ADMIN' : 'STUDENT';
 
-      // Determine if it's admin or student based on ID format or separate event/flag
-      // Ideally, the event could carry an 'isAdmin' flag or we infer it.
-      // For now, let's assume if it starts with 'ADM', it's admin.
-      // Better approach: Let's assume the UI sends the right ID type?
-      // Or we can try to create both and see which one succeeds if formats are distinct.
-      // Given the previous UI had isAdmin flag, let's infer from the ID text for now
-      // or try to create student first.
-
-      // IMPROVEMENT: The event should probably have the isAdmin flag too if we strictly want
-      // to separate them, or we infer from string.
-      // Let's infer from string prefix as per Plan/Previous logic roughly.
-      // Actually, in the previous UI `isAdmin` was passed to page.
-      // Let's try to create StudentId, if it fails try AdminId?
-      // Or better: Just check text prefix as a simple heuristic valid for this demo?
-      // Or - adding isAdmin to LoginRequested event would be cleanest.
-      // Let's modify the event in the next step. for now, let's assume purely based on success of creation.
-
-      // Wait, better yet, let's update LoginRequested in next step to include isAdmin.
-      // checking current event definition... it only has id and password.
-
+      // Create appropriate AuthId based on isAdmin flag
       final AuthId authId;
       if (event.isAdmin) {
         authId = AdminId.create(event.studentId);
@@ -60,9 +42,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
       final password = Password.create(event.password);
 
+      // Execute login with role parameter
       final result = await interactor.executeLogin(
         authId: authId,
         password: password,
+        role: role,
       );
 
       // Handle result using the when() method

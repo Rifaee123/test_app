@@ -18,6 +18,13 @@ class NavigationService {
     return navigatorKey.currentState?.pushReplacement(route);
   }
 
+  Future<dynamic>? pushAndRemoveUntil(Route<dynamic> route) {
+    return navigatorKey.currentState?.pushAndRemoveUntil(
+      route,
+      (route) => false,
+    );
+  }
+
   void goBack() {
     return navigatorKey.currentState?.pop();
   }

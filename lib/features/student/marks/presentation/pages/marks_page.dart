@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_app/features/student/marks/presentation/pages/marks_keys.dart';
 
 class MarksPage extends StatelessWidget {
   const MarksPage({super.key});
@@ -12,10 +13,12 @@ class MarksPage extends StatelessWidget {
     ];
 
     return Scaffold(
+      key: MarksKeys.marksPage,
       appBar: AppBar(title: const Text('Final Marks')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Card(
+          key: MarksKeys.marksList,
           child: DataTable(
             columnSpacing: 20,
             columns: const [
@@ -25,15 +28,18 @@ class MarksPage extends StatelessWidget {
               DataColumn(label: Text('Total')),
             ],
             rows: marks
+                .asMap()
+                .entries
                 .map(
-                  (m) => DataRow(
+                  (entry) => DataRow(
+                    key: ValueKey(MarksKeys.markItem(entry.key)),
                     cells: [
-                      DataCell(Text(m['subject'].toString())),
-                      DataCell(Text(m['internal'].toString())),
-                      DataCell(Text(m['final'].toString())),
+                      DataCell(Text(entry.value['subject'].toString())),
+                      DataCell(Text(entry.value['internal'].toString())),
+                      DataCell(Text(entry.value['final'].toString())),
                       DataCell(
                         Text(
-                          m['total'].toString(),
+                          entry.value['total'].toString(),
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),

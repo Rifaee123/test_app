@@ -1,76 +1,96 @@
-import 'package:test_app/core/entities/student.dart';
 import 'package:test_app/core/entities/user.dart';
 import 'package:test_app/core/network/result.dart';
+import 'package:test_app/core/network/api_endpoints.dart';
+import 'package:test_app/core/network/exceptions/network_exception.dart';
 import 'package:test_app/features/auth/domain/repositories/auth_repository.dart';
-
 import 'package:test_app/core/network/network_service.dart';
-import 'package:test_app/core/services/token_service.dart';
+import 'package:test_app/features/auth/data/models/login_request_dto.dart';
+import 'package:test_app/features/auth/data/models/login_response_dto.dart';
+import 'package:test_app/features/auth/data/mappers/login_response_mapper.dart';
+import 'package:test_app/core/storage/local_storage_service.dart';
 
+/// Implementation of AuthRepository
+/// Follows Dependency Inversion Principle - depends on NetworkService abstraction
+/// Follows Single Responsibility Principle - only handles auth data operations
 class AuthRepositoryImpl implements AuthRepository {
   final NetworkService _networkService;
-  final TokenService _tokenService;
+  final LocalStorageService _localStorageService;
 
-  AuthRepositoryImpl(this._networkService, this._tokenService);
+  AuthRepositoryImpl(this._networkService, this._localStorageService);
 
   @override
-  Future<Result<User?>> login(String id, String password) async {
-    final result = await _networkService.post(
-      '/login',
-      data: {'username': id, 'password': password, 'role': 'STUDENT'},
+  Future<Result<User?>> login(
+    String username,
+    String password,
+    String role,
+  ) async {
+    // Create request DTO
+    final requestDto = LoginRequestDto(
+      username: username,
+      password: password,
+      role: role,
     );
 
-    // If login is successful, the response data contains the JWT
-    // Based on standard implementation, it might be a direct string or { "token": "..." }
-    if (result.isSuccess) {
-      final data = result.getOrNull();
-      String? token;
+    try {
+      final result = await _networkService.post(
+        ApiEndpoints.login,
+        data: requestDto.toJson(),
+      );
 
-      if (data is String) {
-        token = data;
-      } else if (data is Map<String, dynamic>) {
-        token = data['token'] as String? ?? data['jwt'] as String?;
+      if (result.isSuccess) {
+        final data = result.getOrThrow();
+        final responseModel = LoginResponseModel.fromJson(
+          data as Map<String, dynamic>,
+        );
+        final user = LoginResponseMapperFactory.mapResponse(responseModel);
+
+        // Save token and role if user has them
+        // We prioritize the token from response model if available directly
+        final token = responseModel.token ?? user.token;
+        final userRole = responseModel.role ?? user.role;
+        final userId =
+            responseModel.studentId ?? responseModel.username ?? user.id;
+
+        if (token != null) {
+          await _localStorageService.saveToken(token);
+        }
+
+        if (userId.isNotEmpty) {
+          await _localStorageService.saveUserId(userId);
+        }
+
+        // Save role (always available from entity now)
+        await _localStorageService.saveRole(userRole);
+
+        return Result.success(user);
+      } else {
+        return Result.failure(
+          result.getExceptionOrNull() ??
+              UnknownNetworkException(message: 'Unknown error occurred'),
+        );
       }
-
-      if (token != null) {
-        await _tokenService.saveToken(token);
+    } catch (e) {
+      if (e is NetworkException) {
+        return Result.failure(e);
       }
-    }
-
-    // For now, we are keeping the mock logic but simulating a network request delay
-    await Future.delayed(const Duration(seconds: 1));
-
-    // In a real scenario, we would use the network response to create the user
-    // Example:
-    // final result = await _networkService.post('/login', data: {...});
-    // return result.map((data) => User.fromJson(data));
-
-    // Mock authentication logic
-    if (id == 'STU1001' && password == '123456') {
-      return Result.success(
-        const Student(
-          id: 'STU1001',
-          name: 'John Doe',
-          email: 'john.doe@edu.com',
-          dateOfBirth: '2010-05-23',
-          parentName: 'Jane Doe',
-          parentPhone: '9876543210',
-          division: 'A',
-          subjects: ['English', 'Maths', 'Social', 'Malayalam'],
-          phone: '+1 234 567 890',
-          address: '123 Education Lane, Tech City',
-          semester: '6th Semester',
-          attendance: 85.5,
-          averageMarks: 78.4,
+      return Result.failure(
+        UnknownNetworkException(
+          message: 'Login failed: ${e.toString()}',
+          originalError: e,
         ),
       );
     }
-
-    // Return null for invalid credentials (wrapped in Success)
-    return Result.success(null);
   }
 
   @override
   Future<Result<void>> logout() async {
+    // Implement logout API call when endpoint is available (optional)
+
+    // Clear local token and role
+    await _localStorageService.clearToken();
+    await _localStorageService.clearRole();
+    await _localStorageService.clearUserId();
+
     await Future.delayed(const Duration(milliseconds: 500));
     return Result.success(null);
   }

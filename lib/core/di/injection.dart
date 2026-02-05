@@ -6,6 +6,16 @@ import 'package:test_app/core/network/dio_network_service.dart';
 import 'package:test_app/core/network/interceptor_provider.dart';
 import 'package:test_app/core/network/interceptors/auth_interceptor.dart';
 import 'package:test_app/core/network/network_service.dart';
+import 'package:test_app/features/admin/data/repositories/admin_repository_impl.dart';
+import 'package:test_app/features/admin/domain/interactor/admin_interactor.dart';
+import 'package:test_app/features/admin/domain/repositories/admin_repository.dart';
+import 'package:test_app/features/admin/domain/usecases/add_student.dart';
+import 'package:test_app/features/admin/domain/usecases/delete_student.dart';
+import 'package:test_app/features/admin/domain/usecases/get_admin_profile.dart';
+import 'package:test_app/features/admin/domain/usecases/get_students.dart';
+import 'package:test_app/features/admin/domain/usecases/update_student.dart';
+import 'package:test_app/features/admin/presentation/presenter/admin_presenter.dart';
+import 'package:test_app/features/admin/presentation/router/admin_router.dart';
 import 'package:test_app/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:test_app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:test_app/features/auth/domain/usecases/login_usecase.dart';
@@ -14,6 +24,8 @@ import 'package:test_app/features/auth/presentation/interactor/auth_interactor.d
 import 'package:test_app/features/auth/presentation/presenter/auth_bloc.dart';
 import 'package:test_app/features/auth/presentation/router/auth_navigation.dart';
 import 'package:test_app/features/auth/presentation/router/auth_router.dart';
+import 'package:test_app/features/splash/presentation/presenter/splash_bloc.dart';
+import 'package:test_app/features/auth/domain/usecases/check_auth_status_usecase.dart';
 import 'package:test_app/core/services/navigation_service.dart';
 import 'package:test_app/core/services/token_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,13 +33,21 @@ import 'package:test_app/features/student/domain/repositories/student_repository
 import 'package:test_app/features/student/data/repositories/student_repository_impl.dart';
 import 'package:test_app/features/student/domain/usecases/get_student_profile_usecase.dart';
 import 'package:test_app/features/student/presentation/interactor/student_interactor.dart';
+import 'package:test_app/features/student/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'package:test_app/core/storage/local_storage_service.dart';
+import 'package:test_app/core/storage/shared_prefs_local_storage_service.dart';
 
 final sl = GetIt.instance;
 
 Future<void> initDI() async {
-  // External
-  final sharedPrefs = await SharedPreferences.getInstance();
-  sl.registerSingleton<SharedPreferences>(sharedPrefs);
+  // External - Shared Preferences
+  final sharedPreferences = await SharedPreferences.getInstance();
+  sl.registerLazySingleton(() => sharedPreferences);
+
+  // Core - Storage
+  sl.registerLazySingleton<LocalStorageService>(
+    () => SharedPrefsLocalStorageService(sl()),
+  );
 
   // Services
   sl.registerLazySingleton<TokenService>(() => TokenService(sl()));
@@ -40,6 +60,7 @@ Future<void> initDI() async {
     () => GetStudentProfileUseCase(sl()),
   );
   sl.registerLazySingleton<StudentInteractor>(() => StudentInteractor(sl()));
+  sl.registerFactory<DashboardBloc>(() => DashboardBloc(sl()));
 
   // Features - Auth
   // Router (VIPER)
@@ -51,7 +72,7 @@ Future<void> initDI() async {
   // Use cases
   sl.registerLazySingleton<LoginUseCase>(() => LoginUseCase(sl()));
   sl.registerLazySingleton<LogoutUseCase>(() => LogoutUseCase(sl()));
-  sl.registerLazySingleton<AuthInteractor>(
+  sl.registerLazySingleton<IAuthInteractor>(
     () => AuthInteractor(sl(), sl(), sl()),
   );
 
@@ -63,6 +84,10 @@ Future<void> initDI() async {
   // Services
   sl.registerLazySingleton<NetworkService>(() => DioNetworkService(sl()));
   sl.registerLazySingleton<NavigationService>(() => NavigationService());
+
+  // Features - Splash
+  sl.registerFactory(() => SplashBloc(sl(), sl()));
+  sl.registerLazySingleton(() => CheckAuthStatusUseCase(sl()));
 
   // Network - Interceptors
   sl.registerLazySingleton<AuthInterceptor>(() => AuthInterceptor(sl()));
@@ -92,4 +117,39 @@ Future<void> initDI() async {
         .addInterceptors(interceptorProvider.provide())
         .build();
   });
+
+  // Features - Admin
+  // Presenter
+  sl.registerFactory(
+    () => AdminPresenter(
+      profileInteractor: sl<AdminInteractor>(),
+      studentReader: sl<AdminInteractor>(),
+      studentWriter: sl<AdminInteractor>(),
+      router: sl(),
+    ),
+  );
+
+  // Interactor
+  sl.registerLazySingleton<AdminInteractor>(
+    () => AdminInteractorImpl(
+      getAdminProfile: sl(),
+      getStudents: sl(),
+      addStudent: sl(),
+      updateStudent: sl(),
+      deleteStudent: sl(),
+    ),
+  );
+
+  // Use cases
+  sl.registerLazySingleton(() => GetAdminProfile(sl()));
+  sl.registerLazySingleton(() => GetStudents(sl()));
+  sl.registerLazySingleton(() => AddStudent(sl()));
+  sl.registerLazySingleton(() => UpdateStudent(sl()));
+  sl.registerLazySingleton(() => DeleteStudent(sl()));
+
+  // Repository
+  sl.registerLazySingleton<AdminRepository>(() => AdminRepositoryImpl());
+
+  // Router
+  sl.registerLazySingleton<IAdminRouter>(() => AdminRouterImpl());
 }

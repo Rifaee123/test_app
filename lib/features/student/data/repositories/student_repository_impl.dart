@@ -1,5 +1,6 @@
 import 'package:test_app/core/entities/student.dart';
 import 'package:test_app/core/network/network_service.dart';
+import 'package:test_app/core/network/api_endpoints.dart';
 import 'package:test_app/core/network/result.dart';
 import 'package:test_app/features/student/domain/repositories/student_repository.dart';
 import 'package:test_app/features/student/data/models/student_profile_dto.dart';
@@ -12,7 +13,9 @@ class StudentRepositoryImpl implements StudentRepository {
 
   @override
   Future<Result<Student>> getStudentProfile(String studentId) async {
-    final result = await _networkService.get('/students/$studentId');
+    final result = await _networkService.get(
+      ApiEndpoints.studentProfile(studentId),
+    );
 
     return result.map((data) {
       final dto = StudentProfileDTO.fromJson(data as Map<String, dynamic>);

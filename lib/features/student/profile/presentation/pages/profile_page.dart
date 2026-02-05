@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test_app/core/entities/student.dart';
-import 'package:test_app/core/test_ids.dart';
+import 'package:test_app/features/student/profile/presentation/pages/profile_keys.dart';
 
 class ProfilePage extends StatefulWidget {
   final Student student;
@@ -41,16 +41,15 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: ProfileKeys.profilePage,
       appBar: AppBar(
         title: const Text('My Profile'),
         actions: [
           if (!_isEditing)
-            Semantics(
-              label: TestIds.editProfileBtn,
-              child: IconButton(
-                onPressed: () => setState(() => _isEditing = true),
-                icon: const Icon(Icons.edit_outlined),
-              ),
+            IconButton(
+              key: ProfileKeys.editProfileButton,
+              onPressed: () => setState(() => _isEditing = true),
+              icon: const Icon(Icons.edit_outlined),
             ),
         ],
       ),
@@ -58,10 +57,11 @@ class _ProfilePageState extends State<ProfilePage> {
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
-            const CircleAvatar(
+            CircleAvatar(
+              key: ProfileKeys.profileImage,
               radius: 50,
-              backgroundColor: Color(0xFF6366F1),
-              child: Icon(Icons.person, size: 50, color: Colors.white),
+              backgroundColor: const Color(0xFF6366F1),
+              child: const Icon(Icons.person, size: 50, color: Colors.white),
             ),
             const SizedBox(height: 32),
             _buildField('Full Name', _nameController, _isEditing),
@@ -80,19 +80,16 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 32),
             if (_isEditing)
-              Semantics(
-                label: TestIds.saveProfileBtn,
-                child: ElevatedButton(
-                  onPressed: () {
-                    setState(() => _isEditing = false);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Profile updated successfully'),
-                      ),
-                    );
-                  },
-                  child: const Text('Save Changes'),
-                ),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() => _isEditing = false);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Profile updated successfully'),
+                    ),
+                  );
+                },
+                child: const Text('Save Changes'),
               ),
           ],
         ),
