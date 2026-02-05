@@ -85,8 +85,8 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 20),
                 Semantics(
                   identifier: TestIds.passwordInput,
-                  label: TestIds.passwordInput,
 
+                  // label: TestIds.passwordInput,
                   container: true,
                   child: TextField(
                     controller: _passwordController,
