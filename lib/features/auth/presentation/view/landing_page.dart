@@ -28,6 +28,7 @@ class LandingPage extends StatelessWidget {
               const SizedBox(height: 32),
               Semantics(
                 label: TestIds.landingTitle,
+
                 container: true,
                 child: Text(
                   'Welcome to EduTrack',
@@ -48,8 +49,9 @@ class LandingPage extends StatelessWidget {
               const SizedBox(height: 64),
               Semantics(
                 label: TestIds.landingStudentBtn,
+                identifier: TestIds.landingStudentBtn,
+
                 container: true,
-                excludeSemantics: true,
                 child: ElevatedButton(
                   onPressed: () {
                     context.read<AuthBloc>().add(
@@ -61,8 +63,9 @@ class LandingPage extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Semantics(
-                excludeSemantics: true,
                 label: TestIds.landingAdminBtn,
+                identifier: TestIds.landingAdminBtn,
+
                 container: true,
                 child: OutlinedButton(
                   onPressed: () {
