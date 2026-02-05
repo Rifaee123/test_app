@@ -7,6 +7,7 @@ import 'package:test_app/core/test_ids.dart';
 import 'package:test_app/features/student/dashboard/presentation/presenter/student_dashboard_bloc.dart';
 import 'package:test_app/features/student/dashboard/presentation/presenter/student_dashboard_events.dart';
 import 'package:test_app/features/student/dashboard/presentation/presenter/student_dashboard_states.dart';
+import '../model/student_dashboard_view_model.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/subject_list.dart';
 import '../widgets/quick_stat_card.dart';
@@ -23,9 +24,9 @@ class DashboardPage extends StatelessWidget {
           sl<StudentDashboardBloc>()..add(FetchStudentData(student.id)),
       child: BlocBuilder<StudentDashboardBloc, StudentDashboardState>(
         builder: (context, state) {
-          final currentStudent = state is StudentDashboardLoaded
-              ? state.student
-              : student;
+          final viewModel = state is StudentDashboardLoaded
+              ? state.viewModel
+              : StudentDashboardViewModel.fromEntity(student);
 
           return Scaffold(
             backgroundColor: Theme.of(context).primaryColor,
@@ -55,7 +56,7 @@ class DashboardPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ProfileHeader(student: currentStudent),
+                    ProfileHeader(viewModel: viewModel),
                     SizedBox(height: 24.h),
 
                     // Dashboard Quick Stats
@@ -64,19 +65,17 @@ class DashboardPage extends StatelessWidget {
                       children: [
                         QuickStatCard(
                           title: 'Attendance',
-                          value:
-                              '${((currentStudent.attendance ?? 0) * 100).toStringAsFixed(0)}%',
+                          value: viewModel.attendancePercentage,
                           icon: Icons.calendar_today_rounded,
                           color: const Color(0xFF10B981),
-                          progress: currentStudent.attendance ?? 0,
+                          progress: viewModel.attendanceProgress,
                         ),
                         QuickStatCard(
                           title: 'Average Marks',
-                          value:
-                              '${((currentStudent.averageMarks ?? 0) * 100).toStringAsFixed(1)}%',
+                          value: viewModel.avgMarksPercentage,
                           icon: Icons.auto_graph_rounded,
                           color: const Color(0xFFF59E0B),
-                          progress: currentStudent.averageMarks ?? 0,
+                          progress: viewModel.avgMarksProgress,
                         ),
                       ],
                     ),
@@ -91,7 +90,7 @@ class DashboardPage extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 16.h),
-                    SubjectList(subjects: currentStudent.subjects),
+                    SubjectList(subjects: viewModel.subjects),
 
                     if (state is StudentDashboardLoading)
                       const Padding(

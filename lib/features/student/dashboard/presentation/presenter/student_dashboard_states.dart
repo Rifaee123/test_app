@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:test_app/core/entities/student.dart';
+import '../model/student_dashboard_view_model.dart';
 
 abstract class StudentDashboardState extends Equatable {
   const StudentDashboardState();
@@ -13,12 +13,12 @@ class StudentDashboardInitial extends StudentDashboardState {}
 class StudentDashboardLoading extends StudentDashboardState {}
 
 class StudentDashboardLoaded extends StudentDashboardState {
-  final Student student;
+  final StudentDashboardViewModel viewModel;
 
-  const StudentDashboardLoaded(this.student);
+  const StudentDashboardLoaded(this.viewModel);
 
   @override
-  List<Object?> get props => [student];
+  List<Object?> get props => [viewModel];
 }
 
 class StudentDashboardError extends StudentDashboardState {

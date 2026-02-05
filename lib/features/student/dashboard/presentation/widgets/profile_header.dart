@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:test_app/core/entities/student.dart';
+import '../model/student_dashboard_view_model.dart';
 import 'package:test_app/core/test_ids.dart';
 
 class ProfileHeader extends StatelessWidget {
-  final Student student;
+  final StudentDashboardViewModel viewModel;
 
-  const ProfileHeader({super.key, required this.student});
+  const ProfileHeader({super.key, required this.viewModel});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +39,7 @@ class ProfileHeader extends StatelessWidget {
                     Semantics(
                       label: TestIds.studentName,
                       child: Text(
-                        student.name,
+                        viewModel.name,
                         key: const ValueKey(TestIds.studentName),
                         style: const TextStyle(
                           color: Color(0xFF1E293B),
@@ -61,7 +61,7 @@ class ProfileHeader extends StatelessWidget {
                       child: Semantics(
                         label: TestIds.studentIdLabel,
                         child: Text(
-                          'ID: ${student.id}',
+                          'ID: ${viewModel.id}',
                           key: const ValueKey(TestIds.studentIdLabel),
                           style: const TextStyle(
                             color: Color(0xFF64748B),
@@ -74,7 +74,7 @@ class ProfileHeader extends StatelessWidget {
                   ],
                 ),
               ),
-              _DivisionBadge(division: student.division ?? "N/A"),
+              _DivisionBadge(division: viewModel.division),
             ],
           ),
           const SizedBox(height: 24),
@@ -86,14 +86,14 @@ class ProfileHeader extends StatelessWidget {
               _InfoColumn(
                 key: const ValueKey(TestIds.parentName),
                 label: 'Parent / Guardian',
-                value: student.parentName ?? "Not Set",
+                value: viewModel.parentName,
                 icon: Icons.family_restroom_outlined,
                 testId: TestIds.parentName,
               ),
               _InfoColumn(
                 key: const ValueKey(TestIds.studentSemester),
                 label: 'Academic Term',
-                value: student.semester ?? "Current",
+                value: viewModel.semester,
                 icon: Icons.menu_book_outlined,
                 testId: TestIds.studentSemester,
               ),
