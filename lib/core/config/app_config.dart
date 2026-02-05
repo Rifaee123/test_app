@@ -25,7 +25,7 @@ class AppConfig {
   /// Note: Do NOT include '/api' here - it's handled by ApiEndpoints
   static const development = AppConfig(
     environment: Environment.development,
-    apiBaseUrl: 'http://192.168.29.238:8081',
+    apiBaseUrl: 'https://studentcrudtest-production.up.railway.app',
     enableLogging: true,
     maxRetries: 3,
   );
