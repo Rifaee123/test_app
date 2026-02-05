@@ -23,6 +23,7 @@ class AuthInteractor implements IAuthInteractor {
 
   AuthInteractor(this._loginUseCase, this._logoutUseCase, this._navigation);
 
+  @override
   Future<Result<User?>> executeLogin({
     required AuthId authId,
     required Password password,
@@ -44,11 +45,11 @@ class AuthInteractor implements IAuthInteractor {
     return result;
   }
 
+  @override
   void navigateToLogin({required bool isAdmin}) {
     _navigation.goToLogin(isAdmin: isAdmin);
   }
 
-  Future<Result<void>> executeLogout() {
-    return _logoutUseCase.execute();
-  }
+  @override
+  Future<Result<void>> executeLogout() => _logoutUseCase.execute();
 }

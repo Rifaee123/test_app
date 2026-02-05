@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:test_app/features/auth/domain/value_objects/auth_id.dart';
 
 class StudentId extends Equatable implements AuthId {
+  @override
   final String value;
 
   const StudentId(this.value);

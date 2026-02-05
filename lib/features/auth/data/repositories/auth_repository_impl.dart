@@ -56,7 +56,7 @@ class AuthRepositoryImpl implements AuthRepository {
           await _localStorageService.saveToken(token);
         }
 
-        if (userId != null && userId.isNotEmpty) {
+        if (userId.isNotEmpty) {
           await _localStorageService.saveUserId(userId);
         }
 

@@ -32,7 +32,7 @@ class EduTrackApp extends StatelessWidget {
             BlocProvider(create: (_) => sl<AuthBloc>()),
             BlocProvider(
               create: (context) =>
-                  sl<AdminPresenter>()..add(LoadAdminDataEvent()),
+                  sl<AdminDashboardBloc>()..add(LoadAdminDataEvent()),
             ),
           ],
           child: MaterialApp(

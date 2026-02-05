@@ -19,9 +19,12 @@ class AdminKeys {
 
   // Student Form Elements
   static const Key studentNameInput = ValueKey('studentNameInput');
-  static const Key studentIdInput = ValueKey('studentIdInput');
-  static const Key studentEmailInput = ValueKey('studentEmailInput');
   static const Key studentGradeInput = ValueKey('studentGradeInput');
+  static const Key studentDobInput = ValueKey('studentDobInput');
+  static const Key studentParentNameInput = ValueKey('studentParentNameInput');
+  static const Key studentParentPhoneInput = ValueKey(
+    'studentParentPhoneInput',
+  );
   static const Key saveStudentBtn = ValueKey('saveStudentBtn');
   static const Key cancelFormBtn = ValueKey('cancelFormBtn');
 

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:test_app/features/admin/presentation/presenter/admin_presenter.dart';
-import 'package:test_app/core/entities/student.dart';
 import 'package:test_app/core/theme/app_theme.dart';
 import 'package:test_app/core/utils/responsive_utils.dart';
 import 'package:test_app/features/admin/presentation/view/widgets/admin_stat_card.dart';
@@ -23,11 +22,13 @@ class AdminHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       key: AdminKeys.adminHomeView,
-      body: BlocBuilder<AdminPresenter, AdminState>(
+      body: BlocBuilder<AdminDashboardBloc, AdminState>(
         builder: (context, state) {
           if (state is AdminLoading) {
             return _buildLoadingState(context);
           } else if (state is AdminLoaded) {
+            final user = admin ?? state.user;
+            final students = state.students;
             return CustomScrollView(
               slivers: [
                 _buildAppBar(context),
@@ -37,17 +38,25 @@ class AdminHomePage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        AdminWelcomeHeader(teacher: state.teacher),
+                        AdminWelcomeHeader(user: user),
                         SizedBox(height: 6.h),
-                        _buildStatsGrid(state.students),
+                        _buildStatsGrid(state.stats),
                         SizedBox(height: 8.h),
                         AdminSectionHeader(
                           testKey: AdminKeys.addStudentBtn,
                           title: 'Students Management',
-                          onAddPressed: () => context
-                              .read<AdminPresenter>()
-                              .router
-                              .navigateToStudentForm(context),
+                          onAddPressed: () async {
+                            final shouldRefresh = await context
+                                .read<AdminDashboardBloc>()
+                                .router
+                                .navigateToStudentForm(context);
+
+                            if (shouldRefresh == true && context.mounted) {
+                              context.read<AdminDashboardBloc>().add(
+                                LoadAdminDataEvent(),
+                              );
+                            }
+                          },
                         ),
                         SizedBox(height: 2.h),
                       ],
@@ -61,8 +70,8 @@ class AdminHomePage extends StatelessWidget {
                   sliver: SliverList(
                     key: AdminKeys.studentList,
                     delegate: SliverChildBuilderDelegate((context, index) {
-                      return AdminStudentCard(student: state.students[index]);
-                    }, childCount: state.students.length),
+                      return AdminStudentCard(student: students[index]);
+                    }, childCount: students.length),
                   ),
                 ),
                 SliverToBoxAdapter(child: SizedBox(height: 8.h)),
@@ -109,7 +118,7 @@ class AdminHomePage extends StatelessWidget {
                 child: Icon(
                   Icons.admin_panel_settings,
                   size: 60.sp,
-                  color: Colors.white.withOpacity(0.1),
+                  color: Colors.white.withValues(alpha: 0.1),
                 ),
               ),
             ],
@@ -128,28 +137,40 @@ class AdminHomePage extends StatelessWidget {
         titlePadding: EdgeInsets.only(left: 10.w, bottom: 8.h),
       ),
       actions: [
-        _AppBarAction(icon: Icons.notifications_rounded, onPressed: () {}),
-        _AppBarAction(icon: Icons.person_rounded, onPressed: () {}),
+        _AppBarAction(
+          label: 'Notifications Button',
+          hint: 'View notifications',
+          icon: Icons.notifications_rounded,
+          onPressed: () {},
+        ),
+        _AppBarAction(
+          label: 'Profile Button',
+          hint: 'View profile settings',
+          icon: Icons.person_rounded,
+          onPressed: () {},
+        ),
         SizedBox(width: 10.w),
       ],
     );
   }
 
-  Widget _buildStatsGrid(List<Student> students) {
+  Widget _buildStatsGrid(List<DashboardStat> stats) {
     return Row(
-      children: [
-        Expanded(
-          child: AdminStatCard(
-            testKey: AdminKeys.statCardActiveStudents,
-            title: 'Active Students',
-            value: students.length.toString(),
-            icon: Icons.school_rounded,
-            color: AppTheme.primaryColor,
+      children: stats.map((stat) {
+        final isLast = stats.indexOf(stat) == stats.length - 1;
+        return Expanded(
+          child: Padding(
+            padding: EdgeInsets.only(right: isLast ? 0 : 6.w),
+            child: AdminStatCard(
+              testKey: stat.testKey,
+              title: stat.title,
+              value: stat.value,
+              icon: stat.icon,
+              color: stat.color,
+            ),
           ),
-        ),
-        SizedBox(width: 10.w),
-        const Spacer(flex: 2),
-      ],
+        );
+      }).toList(),
     );
   }
 
@@ -194,8 +215,15 @@ class AdminHomePage extends StatelessWidget {
 class _AppBarAction extends StatelessWidget {
   final IconData icon;
   final VoidCallback onPressed;
+  final String label;
+  final String hint;
 
-  const _AppBarAction({required this.icon, required this.onPressed});
+  const _AppBarAction({
+    required this.icon,
+    required this.onPressed,
+    required this.label,
+    required this.hint,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -203,14 +231,19 @@ class _AppBarAction extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.only(right: 6.w),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.15),
+          color: Colors.white.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: IconButton(
-          onPressed: onPressed,
-          constraints: BoxConstraints.tightFor(width: 24.w, height: 24.h),
-          padding: EdgeInsets.zero,
-          icon: Icon(icon, color: Colors.white, size: 14.sp),
+        child: Semantics(
+          label: label,
+          hint: hint,
+          button: true,
+          child: IconButton(
+            onPressed: onPressed,
+            constraints: BoxConstraints.tightFor(width: 24.w, height: 24.h),
+            padding: EdgeInsets.zero,
+            icon: Icon(icon, color: Colors.white, size: 14.sp),
+          ),
         ),
       ),
     );

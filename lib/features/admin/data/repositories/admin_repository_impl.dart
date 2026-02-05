@@ -1,74 +1,112 @@
 import 'package:test_app/core/entities/student.dart';
-import 'package:test_app/core/entities/teacher.dart';
+import 'package:test_app/core/entities/user.dart';
+import 'package:test_app/core/network/network_service.dart';
+import 'package:test_app/core/network/result.dart';
+import 'package:test_app/features/admin/data/models/student_model.dart';
 import 'package:test_app/features/admin/domain/repositories/admin_repository.dart';
+import 'package:test_app/features/admin/data/repositories/admin_api_constants.dart';
+
+import 'package:test_app/features/admin/data/datasources/admin_local_data_source.dart';
 
 class AdminRepositoryImpl implements AdminRepository {
-  final Teacher _mockTeacher = const Teacher(
-    id: 'TCH2001',
-    name: 'Dr. Sarah Wilson',
-    email: 'sarah.wilson@edu.com',
-    subject: 'Computer Science',
-    department: 'Engineering',
-  );
+  final NetworkService _networkService;
+  final AdminLocalDataSource _localDataSource;
 
-  final List<Student> _students = [
-    // ... (existing students)
-    const Student(
-      id: 'STU1001',
-      name: 'John Doe',
-      email: 'john.doe@edu.com',
-      phone: '+1 234 567 890',
-      address: '123 Education Lane, Tech City',
-      semester: '6th Semester',
-      attendance: 85.5,
-      averageMarks: 78.4,
-      parentName: 'Robert Doe',
-      division: 'Division A',
-    ),
-    const Student(
-      id: 'STU1002',
-      name: 'Jane Smith',
-      email: 'jane.smith@edu.com',
-      phone: '+1 987 654 321',
-      address: '456 Knowledge St, Tech City',
-      semester: '4th Semester',
-      attendance: 92.0,
-      averageMarks: 88.5,
-      parentName: 'Sarah Smith',
-      division: 'Division B',
-    ),
-  ];
+  AdminRepositoryImpl(this._networkService, this._localDataSource);
 
   @override
-  Future<Teacher> getAdminProfile() async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    return _mockTeacher;
+  Future<User> getAdminProfile() async {
+    return _localDataSource.getAdminProfile();
   }
 
   @override
   Future<List<Student>> getStudents() async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    return List.from(_students);
+    final result = await _networkService.get(AdminApiConstants.students);
+
+    return result.fold((exception) => throw exception, (data) {
+      if (data is List) {
+        return data
+            .map(
+              (json) => StudentModel.fromJson(
+                json as Map<String, dynamic>,
+              ).toEntity(),
+            )
+            .toList();
+      }
+      return [];
+    });
+  }
+
+  @override
+  Future<Student> getStudentById(String id) async {
+    final result = await _networkService.get(
+      AdminApiConstants.studentDetail(id),
+    );
+
+    return result.fold((exception) => throw exception, (data) {
+      if (data != null) {
+        return StudentModel.fromJson(data as Map<String, dynamic>).toEntity();
+      }
+      throw Exception('Student not found');
+    });
   }
 
   @override
   Future<void> addStudent(Student student) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    _students.add(student);
+    final model = StudentModel(
+      id: student.id,
+      name: student.name,
+      email: student.email,
+      parentPhone: student.parentPhone,
+      address: student.address,
+      semester: student.semester,
+      attendance: student.attendance,
+      averageMarks: student.averageMarks,
+      parentName: student.parentName,
+      division: student.division,
+      dateOfBirth: student.dateOfBirth,
+      subjects: student.subjects,
+    );
+
+    final result = await _networkService.post(
+      AdminApiConstants.students,
+      data: model.toApiJson(),
+    );
+
+    result.fold((exception) => throw exception, (data) => null);
   }
 
   @override
   Future<void> updateStudent(Student student) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    final index = _students.indexWhere((s) => s.id == student.id);
-    if (index != -1) {
-      _students[index] = student;
-    }
+    final model = StudentModel(
+      id: student.id,
+      name: student.name,
+      email: student.email,
+      parentPhone: student.parentPhone,
+      address: student.address,
+      semester: student.semester,
+      attendance: student.attendance,
+      averageMarks: student.averageMarks,
+      parentName: student.parentName,
+      division: student.division,
+      dateOfBirth: student.dateOfBirth,
+      subjects: student.subjects,
+    );
+
+    final result = await _networkService.put(
+      AdminApiConstants.studentDetail(student.id),
+      data: model.toApiJson(),
+    );
+
+    result.fold((exception) => throw exception, (data) => null);
   }
 
   @override
   Future<void> deleteStudent(String studentId) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    _students.removeWhere((s) => s.id == studentId);
+    final result = await _networkService.delete(
+      AdminApiConstants.studentDetail(studentId),
+    );
+
+    result.fold((exception) => throw exception, (data) => null);
   }
 }

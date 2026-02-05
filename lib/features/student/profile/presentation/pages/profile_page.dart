@@ -22,7 +22,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.student.name);
-    _phoneController = TextEditingController(text: widget.student.phone);
+    _phoneController = TextEditingController(text: widget.student.parentPhone);
     _addressController = TextEditingController(text: widget.student.address);
     _parentController = TextEditingController(text: widget.student.parentName);
     _divisionController = TextEditingController(text: widget.student.division);

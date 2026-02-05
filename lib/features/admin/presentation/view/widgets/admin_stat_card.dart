@@ -38,13 +38,16 @@ class AdminStatCard extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [color.withOpacity(0.15), color.withOpacity(0.05)],
+              colors: [
+                color.withValues(alpha: 0.15),
+                color.withValues(alpha: 0.05),
+              ],
             ),
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: color.withOpacity(0.1), width: 1),
+            border: Border.all(color: color.withValues(alpha: 0.1), width: 1),
             boxShadow: [
               BoxShadow(
-                color: color.withOpacity(0.05),
+                color: color.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -56,11 +59,11 @@ class AdminStatCard extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(3.w),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: color.withOpacity(0.1),
+                      color: color.withValues(alpha: 0.1),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
@@ -72,7 +75,7 @@ class AdminStatCard extends StatelessWidget {
               Text(
                 value,
                 style: TextStyle(
-                  color: color.withOpacity(0.9),
+                  color: color.withValues(alpha: 0.9),
                   fontSize: 11.sp,
                   fontWeight: FontWeight.w900,
                   letterSpacing: -0.5,
@@ -81,7 +84,7 @@ class AdminStatCard extends StatelessWidget {
               Text(
                 title,
                 style: TextStyle(
-                  color: color.withOpacity(0.6),
+                  color: color.withValues(alpha: 0.6),
                   fontSize: 7.sp,
                   fontWeight: FontWeight.w600,
                 ),
