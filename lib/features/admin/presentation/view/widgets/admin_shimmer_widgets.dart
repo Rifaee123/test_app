@@ -8,10 +8,13 @@ class AdminShimmerBase extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
-      child: child,
+    return Semantics(
+      label: 'Loading content...',
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey[300]!,
+        highlightColor: Colors.grey[100]!,
+        child: child,
+      ),
     );
   }
 }

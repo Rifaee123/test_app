@@ -1,5 +1,5 @@
-import 'package:test_app/core/entities/teacher.dart';
+import 'package:test_app/core/entities/user.dart';
 
 abstract class IProfileInteractor {
-  Future<Teacher> getProfile();
+  Future<User> getProfile();
 }

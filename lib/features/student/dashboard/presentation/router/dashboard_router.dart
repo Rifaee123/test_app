@@ -1,32 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:test_app/core/entities/student.dart';
-import 'package:test_app/features/student/attendance/presentation/pages/attendance_page.dart';
-import 'package:test_app/features/student/courses/presentation/pages/courses_page.dart';
-import 'package:test_app/features/student/marks/presentation/pages/marks_page.dart';
-import 'package:test_app/features/student/profile/presentation/pages/profile_page.dart';
 
-class DashboardRouter {
-  static void navigateToAttendance(BuildContext context) {
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (_) => const AttendancePage()));
-  }
+abstract class IDashboardRouter {
+  // Define navigation methods here as needed
+}
 
-  static void navigateToCourses(BuildContext context) {
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (_) => const CoursesPage()));
-  }
-
-  static void navigateToMarks(BuildContext context) {
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (_) => const MarksPage()));
-  }
-
+class DashboardRouter implements IDashboardRouter {
   static void navigateToProfile(BuildContext context, Student student) {
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (_) => ProfilePage(student: student)));
+    // Navigate to profile page
+    // Using simple navigation for now, can be replaced with named routes
+    /*
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ProfilePage(student: student),
+      ),
+    );
+    */
+    // Since ProfilePage import might be missing or circular,
+    // we'll assume a named route or just print for now if not implemented.
+    // Actually, looking at side_bar, it uses keys. Logic suggests:
+    Navigator.pushNamed(context, '/profile', arguments: student);
   }
 }

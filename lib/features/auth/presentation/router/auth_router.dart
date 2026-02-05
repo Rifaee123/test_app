@@ -7,7 +7,7 @@ import 'package:test_app/features/admin/presentation/view/pages/admin_home_page.
 import 'package:test_app/features/auth/presentation/router/auth_navigation.dart';
 import 'package:test_app/features/auth/presentation/view/landing_page.dart';
 import 'package:test_app/features/auth/presentation/view/login_page.dart';
-import 'package:test_app/features/student/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:test_app/features/student/dashboard/presentation/view/dashboard_page.dart';
 
 class AuthRouter implements AuthNavigation {
   final NavigationService navigationService;

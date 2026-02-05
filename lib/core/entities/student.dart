@@ -2,7 +2,7 @@ import 'package:test_app/core/entities/user.dart';
 
 class Student extends User {
   // id, name, email are in User base class
-  final String? token; // Authentication token
+  final String? token;
   final String dateOfBirth;
   final String parentName;
   final String parentPhone;
@@ -15,9 +15,9 @@ class Student extends User {
   final double averageMarks;
 
   const Student({
-    required super.id,
-    required super.name,
-    required super.email,
+    required String id,
+    required String name,
+    required String email,
     this.token,
     required this.dateOfBirth,
     required this.parentName,
@@ -29,7 +29,7 @@ class Student extends User {
     this.semester = 'S1',
     this.attendance = 0.0,
     this.averageMarks = 0.0,
-  });
+  }) : super(id: id, name: name, email: email);
 
   @override
   String get role => 'STUDENT';
@@ -52,6 +52,7 @@ class Student extends User {
 
   Student copyWith({
     String? name,
+    String? email,
     String? token,
     String? dateOfBirth,
     String? parentName,
@@ -67,7 +68,7 @@ class Student extends User {
     return Student(
       id: id,
       name: name ?? this.name,
-      email: email,
+      email: email ?? this.email,
       token: token ?? this.token,
       dateOfBirth: dateOfBirth ?? this.dateOfBirth,
       parentName: parentName ?? this.parentName,

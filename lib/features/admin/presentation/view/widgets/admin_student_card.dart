@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:test_app/core/di/injection.dart';
 import 'package:test_app/core/entities/student.dart';
 import 'package:test_app/core/theme/app_theme.dart';
 import 'package:test_app/features/admin/presentation/presenter/admin_presenter.dart';
@@ -33,12 +34,12 @@ class AdminStudentCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.02),
+                color: Colors.black.withValues(alpha: 0.02),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
               BoxShadow(
-                color: AppTheme.primaryColor.withOpacity(0.03),
+                color: AppTheme.primaryColor.withValues(alpha: 0.03),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
@@ -46,10 +47,16 @@ class AdminStudentCard extends StatelessWidget {
             border: Border.all(color: Colors.grey.shade100, width: 1),
           ),
           child: InkWell(
-            onTap: () => context
-                .read<AdminPresenter>()
-                .router
-                .navigateToStudentDetail(context, student),
+            onTap: () async {
+              final shouldRefresh = await context
+                  .read<AdminDashboardBloc>()
+                  .router
+                  .navigateToStudentDetail(context, student);
+
+              if (shouldRefresh == true && context.mounted) {
+                context.read<AdminDashboardBloc>().add(LoadAdminDataEvent());
+              }
+            },
             borderRadius: BorderRadius.circular(10),
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
@@ -62,14 +69,14 @@ class AdminStudentCard extends StatelessWidget {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: AppTheme.primaryColor.withOpacity(0.2),
+                          color: AppTheme.primaryColor.withValues(alpha: 0.2),
                           width: 1,
                         ),
                       ),
                       child: CircleAvatar(
                         radius: 12.w,
-                        backgroundColor: AppTheme.primaryColor.withOpacity(
-                          0.08,
+                        backgroundColor: AppTheme.primaryColor.withValues(
+                          alpha: 0.08,
                         ),
                         child: Text(
                           student.name.substring(0, 1),
@@ -111,17 +118,38 @@ class AdminStudentCard extends StatelessWidget {
                     testKey: ValueKey(AdminKeys.editStudentBtn(student.id)),
                     icon: Icons.edit_rounded,
                     color: Colors.blue.shade600,
-                    onPressed: () => context
-                        .read<AdminPresenter>()
-                        .router
-                        .navigateToStudentForm(context, student: student),
+                    onPressed: () async {
+                      final shouldRefresh = await context
+                          .read<AdminDashboardBloc>()
+                          .router
+                          .navigateToStudentForm(context, student: student);
+
+                      if (shouldRefresh == true && context.mounted) {
+                        context.read<AdminDashboardBloc>().add(
+                          LoadAdminDataEvent(),
+                        );
+                      }
+                    },
                   ),
                   SizedBox(width: 8.w),
                   _AnimatedActionButton(
                     testKey: ValueKey(AdminKeys.deleteStudentBtn(student.id)),
                     icon: Icons.delete_rounded,
                     color: Colors.red.shade600,
-                    onPressed: () => _showDeleteConfirmation(context),
+                    onPressed: () async {
+                      final confirmed = await context
+                          .read<AdminDashboardBloc>()
+                          .router
+                          .confirmDeleteStudent(context, student.name);
+                      if (confirmed == true && context.mounted) {
+                        sl<StudentManagementBloc>().add(
+                          DeleteStudentEvent(student.id),
+                        );
+                        context.read<AdminDashboardBloc>().add(
+                          LoadAdminDataEvent(),
+                        );
+                      }
+                    },
                   ),
                 ],
               ),
@@ -129,62 +157,6 @@ class AdminStudentCard extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  void _showDeleteConfirmation(BuildContext context) {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: '',
-      transitionDuration: const Duration(milliseconds: 300),
-      pageBuilder: (context, anim1, anim2) => const SizedBox(),
-      transitionBuilder: (context, anim1, anim2, child) {
-        return Transform.scale(
-          scale: anim1.value,
-          child: Opacity(
-            opacity: anim1.value,
-            child: AlertDialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              title: Text(
-                'Delete Student',
-                style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
-              ),
-              content: Text(
-                'Are you sure you want to delete ${student.name}?',
-                style: TextStyle(fontSize: 10.sp),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text('Cancel', style: TextStyle(fontSize: 9.sp)),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    context.read<AdminPresenter>().add(
-                      DeleteStudentEvent(student.id),
-                    );
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red.shade600,
-                    minimumSize: Size(60.w, 30.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text(
-                    'Delete',
-                    style: TextStyle(color: Colors.white, fontSize: 9.sp),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 }
@@ -212,7 +184,7 @@ class _AnimatedActionButton extends StatelessWidget {
       icon: Container(
         padding: EdgeInsets.all(4.w),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.08),
+          color: color.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(6),
         ),
         child: Icon(icon, size: 11.sp, color: color),
