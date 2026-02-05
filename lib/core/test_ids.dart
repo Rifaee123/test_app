@@ -23,4 +23,6 @@ class TestIds {
   static const studentSemester = 'student_semester';
   static const subjectList = 'subject_list';
   static const subjectCard = 'subject_card';
+  static const attendanceStat = 'attendance_stat';
+  static const marksStat = 'marks_stat';
 }

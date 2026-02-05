@@ -64,6 +64,7 @@ class DashboardPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         QuickStatCard(
+                          testId: TestIds.attendanceStat,
                           title: 'Attendance',
                           value: viewModel.attendancePercentage,
                           icon: Icons.calendar_today_rounded,
@@ -71,6 +72,7 @@ class DashboardPage extends StatelessWidget {
                           progress: viewModel.attendanceProgress,
                         ),
                         QuickStatCard(
+                          testId: TestIds.marksStat,
                           title: 'Average Marks',
                           value: viewModel.avgMarksPercentage,
                           icon: Icons.auto_graph_rounded,
@@ -81,12 +83,16 @@ class DashboardPage extends StatelessWidget {
                     ),
                     SizedBox(height: 24.h),
 
-                    Text(
-                      'Academic Subjects',
-                      key: const ValueKey('academic_subjects_header'),
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white.withValues(alpha: 0.9),
+                    Semantics(
+                      label: 'Academic Subjects',
+                      header: true,
+                      child: Text(
+                        'Academic Subjects',
+                        key: const ValueKey('academic_subjects_header'),
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white.withValues(alpha: 0.9),
+                        ),
                       ),
                     ),
                     SizedBox(height: 16.h),
