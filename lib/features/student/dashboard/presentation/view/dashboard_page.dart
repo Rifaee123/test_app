@@ -11,6 +11,8 @@ import '../model/student_dashboard_view_model.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/subject_list.dart';
 import '../widgets/quick_stat_card.dart';
+import 'package:test_app/features/auth/domain/usecases/logout_usecase.dart';
+import 'package:test_app/features/auth/presentation/router/auth_navigation.dart';
 
 class DashboardPage extends StatelessWidget {
   final Student student;
@@ -43,6 +45,19 @@ class DashboardPage extends StatelessWidget {
                   ),
                 ),
               ),
+              actions: [
+                IconButton(
+                  key: const ValueKey(TestIds.logoutButton),
+                  icon: const Icon(Icons.logout, color: Colors.white),
+                  onPressed: () async {
+                    await sl<LogoutUseCase>().execute();
+                    if (context.mounted) {
+                      sl<AuthNavigation>().goToLanding();
+                    }
+                  },
+                ),
+                SizedBox(width: 8.w),
+              ],
             ),
             body: RefreshIndicator(
               onRefresh: () async {

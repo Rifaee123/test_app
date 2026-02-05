@@ -11,6 +11,10 @@ import 'package:test_app/features/admin/presentation/view/widgets/admin_section_
 import 'package:test_app/features/admin/presentation/view/widgets/admin_shimmer_widgets.dart';
 
 import 'package:test_app/features/admin/presentation/view/admin_keys.dart';
+import 'package:test_app/core/di/injection.dart';
+import 'package:test_app/core/test_ids.dart';
+import 'package:test_app/features/auth/domain/usecases/logout_usecase.dart';
+import 'package:test_app/features/auth/presentation/router/auth_navigation.dart';
 
 import 'package:test_app/core/entities/admin.dart';
 
@@ -144,10 +148,16 @@ class AdminHomePage extends StatelessWidget {
           onPressed: () {},
         ),
         _AppBarAction(
-          label: 'Profile Button',
-          hint: 'View profile settings',
-          icon: Icons.person_rounded,
-          onPressed: () {},
+          key: const ValueKey(TestIds.logoutButton),
+          label: 'Logout Button',
+          hint: 'Logout from application',
+          icon: Icons.logout_rounded,
+          onPressed: () async {
+            await sl<LogoutUseCase>().execute();
+            if (context.mounted) {
+              sl<AuthNavigation>().goToLanding();
+            }
+          },
         ),
         SizedBox(width: 10.w),
       ],
@@ -223,6 +233,7 @@ class _AppBarAction extends StatelessWidget {
     required this.onPressed,
     required this.label,
     required this.hint,
+    super.key,
   });
 
   @override
