@@ -15,18 +15,12 @@ class TestIds {
 
   // Dashboard
   static const dashboardTitle = 'dashboard_title';
-  static const attendanceCard = 'attendance_card';
-  static const coursesCard = 'courses_card';
-  static const marksCard = 'marks_card';
-
-  // Courses
-  static const enrollButton = 'enroll_button';
-  static const courseList = 'course_list';
-
-  // Attendance
-  static const attendanceList = 'attendance_list';
-
-  // Profile
-  static const editProfileBtn = 'edit_profile_button';
-  static const saveProfileBtn = 'save_profile_button';
+  static const profileHeader = 'profile_header';
+  static const studentName = 'student_name';
+  static const studentIdLabel = 'student_id_label';
+  static const studentDivision = 'student_division';
+  static const parentName = 'parent_name';
+  static const studentSemester = 'student_semester';
+  static const subjectList = 'subject_list';
+  static const subjectCard = 'subject_card';
 }

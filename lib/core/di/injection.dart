@@ -32,6 +32,9 @@ import 'package:test_app/core/services/navigation_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test_app/core/storage/local_storage_service.dart';
 import 'package:test_app/core/storage/shared_prefs_local_storage_service.dart';
+import 'package:test_app/features/student/dashboard/domain/usecases/dashboard_interactor.dart';
+import 'package:test_app/features/student/dashboard/presentation/presenter/student_dashboard_bloc.dart';
+import 'package:test_app/features/student/dashboard/presentation/router/dashboard_router.dart';
 
 final sl = GetIt.instance;
 
@@ -164,6 +167,13 @@ Future<void> initDI() async {
   sl.registerLazySingleton<IStudentRepositoryWriter>(
     () => sl<AdminRepository>(),
   );
+
+  // Features - Student Dashboard
+  sl.registerFactory(() => StudentDashboardBloc(sl<IDashboardInteractor>()));
+  sl.registerLazySingleton<IDashboardInteractor>(
+    () => DashboardInteractor(sl()),
+  );
+  sl.registerLazySingleton<IDashboardRouter>(() => DashboardRouter());
 
   // Router
   sl.registerLazySingleton<IAdminRouter>(() => AdminRouterImpl());
