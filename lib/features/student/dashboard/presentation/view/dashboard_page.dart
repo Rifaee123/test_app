@@ -36,6 +36,7 @@ class DashboardPage extends StatelessWidget {
               backgroundColor: Theme.of(context).primaryColor,
               elevation: 0,
               title: Semantics(
+                identifier: TestIds.dashboardTitle,
                 label: TestIds.dashboardTitle,
                 child: const Text(
                   'EduTrack Dashboard',
@@ -99,6 +100,7 @@ class DashboardPage extends StatelessWidget {
                     SizedBox(height: 24.h),
 
                     Semantics(
+                      identifier: 'academic_subjects_header',
                       label: 'Academic Subjects',
                       header: true,
                       child: Text(

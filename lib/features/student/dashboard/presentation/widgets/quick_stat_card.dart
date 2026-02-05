@@ -22,6 +22,7 @@ class QuickStatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Semantics(
+      identifier: testId,
       label: testId,
       child: Container(
         key: testId != null ? ValueKey(testId) : null,

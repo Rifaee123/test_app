@@ -37,6 +37,7 @@ class ProfileHeader extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Semantics(
+                      identifier: TestIds.studentName,
                       label: TestIds.studentName,
                       child: Text(
                         viewModel.name,
@@ -59,6 +60,7 @@ class ProfileHeader extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Semantics(
+                        identifier: TestIds.studentIdLabel,
                         label: TestIds.studentIdLabel,
                         child: Text(
                           'ID: ${viewModel.id}',
@@ -123,6 +125,7 @@ class _DivisionBadge extends StatelessWidget {
       child: Column(
         children: [
           Semantics(
+            identifier: TestIds.studentDivision,
             label: TestIds.studentDivision,
             child: Text(
               division,
@@ -181,6 +184,7 @@ class _InfoColumn extends StatelessWidget {
             ),
             const SizedBox(height: 2),
             Semantics(
+              identifier: testId,
               label: testId,
               child: Text(
                 value,

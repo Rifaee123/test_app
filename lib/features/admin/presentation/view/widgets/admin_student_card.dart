@@ -15,7 +15,7 @@ class AdminStudentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      key: ValueKey(AdminKeys.studentItem(student.id)),
+      identifier: AdminKeys.studentItem(student.id),
       label: 'Student card for ${student.name}',
       child: TweenAnimationBuilder<double>(
         duration: const Duration(milliseconds: 500),
@@ -94,13 +94,17 @@ class AdminStudentCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          student.name,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w800,
-                            fontSize: 10.sp,
-                            color: AppTheme.textColor,
-                            letterSpacing: -0.2,
+                        Semantics(
+                          identifier: 'student_name_${student.id}',
+                          label: 'Student Name: ${student.name}',
+                          child: Text(
+                            student.name,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 10.sp,
+                              color: AppTheme.textColor,
+                              letterSpacing: -0.2,
+                            ),
                           ),
                         ),
                         Text(
@@ -118,6 +122,8 @@ class AdminStudentCard extends StatelessWidget {
                     testKey: ValueKey(AdminKeys.editStudentBtn(student.id)),
                     icon: Icons.edit_rounded,
                     color: Colors.blue.shade600,
+                    label: 'Edit Student',
+                    hint: 'Opens form to edit student details',
                     onPressed: () async {
                       final shouldRefresh = await context
                           .read<AdminDashboardBloc>()
@@ -136,6 +142,8 @@ class AdminStudentCard extends StatelessWidget {
                     testKey: ValueKey(AdminKeys.deleteStudentBtn(student.id)),
                     icon: Icons.delete_rounded,
                     color: Colors.red.shade600,
+                    label: 'Delete Student',
+                    hint: 'Deletes student from records',
                     onPressed: () async {
                       final confirmed = await context
                           .read<AdminDashboardBloc>()
@@ -166,28 +174,40 @@ class _AnimatedActionButton extends StatelessWidget {
   final Color color;
   final VoidCallback onPressed;
   final Key? testKey;
+  final String label;
+  final String hint;
 
   const _AnimatedActionButton({
     required this.icon,
     required this.color,
     required this.onPressed,
+    required this.label,
+    required this.hint,
     this.testKey,
   });
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      key: testKey,
-      onPressed: onPressed,
-      padding: EdgeInsets.zero,
-      constraints: const BoxConstraints(),
-      icon: Container(
-        padding: EdgeInsets.all(4.w),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(6),
+    return Semantics(
+      identifier: testKey is ValueKey<String>
+          ? (testKey as ValueKey<String>).value
+          : null,
+      label: label,
+      hint: hint,
+      button: true,
+      child: IconButton(
+        key: testKey,
+        onPressed: onPressed,
+        padding: EdgeInsets.zero,
+        constraints: const BoxConstraints(),
+        icon: Container(
+          padding: EdgeInsets.all(4.w),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Icon(icon, size: 11.sp, color: color),
         ),
-        child: Icon(icon, size: 11.sp, color: color),
       ),
     );
   }

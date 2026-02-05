@@ -27,16 +27,20 @@ class SubjectList extends StatelessWidget {
 
     return SizedBox(
       height: 130.h,
-      child: ListView.builder(
-        key: const ValueKey(TestIds.subjectList),
-        scrollDirection: Axis.horizontal,
-        itemCount: subjects.length,
-        itemBuilder: (context, index) {
-          return SubjectCard(
-            key: ValueKey('${TestIds.subjectCard}_$index'),
-            subject: subjects[index],
-          );
-        },
+      child: Semantics(
+        identifier: TestIds.subjectList,
+        label: 'Subject List',
+        child: ListView.builder(
+          key: const ValueKey(TestIds.subjectList),
+          scrollDirection: Axis.horizontal,
+          itemCount: subjects.length,
+          itemBuilder: (context, index) {
+            return SubjectCard(
+              key: ValueKey('${TestIds.subjectCard}_$index'),
+              subject: subjects[index],
+            );
+          },
+        ),
       ),
     );
   }

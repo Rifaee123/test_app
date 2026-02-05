@@ -77,7 +77,8 @@ class _StudentFormPageState extends State<StudentFormPage> {
             child: Column(
               children: [
                 Semantics(
-                  label: 'Student Name Input Field',
+                  identifier: AdminKeys.studentNameInputId,
+                  // label: 'Student Name Input Field',
                   hint: 'Enter the full name of the student',
                   child: TextFormField(
                     key: AdminKeys.studentNameInput,
@@ -92,7 +93,8 @@ class _StudentFormPageState extends State<StudentFormPage> {
                 ),
                 SizedBox(height: 16.h),
                 Semantics(
-                  label: 'Date of Birth Input Field',
+                  identifier: AdminKeys.studentDobInputId,
+                  // label: 'Date of Birth Input Field',
                   hint: 'Enter date in YYYY-MM-DD format',
                   child: TextFormField(
                     key: AdminKeys.studentDobInput,
@@ -106,7 +108,8 @@ class _StudentFormPageState extends State<StudentFormPage> {
                 ),
                 SizedBox(height: 16.h),
                 Semantics(
-                  label: 'Parent Name Input Field',
+                  identifier: AdminKeys.studentParentNameInputId,
+                  // label: 'Parent Name Input Field',
                   hint: 'Enter the name of the parent',
                   child: TextFormField(
                     key: AdminKeys.studentParentNameInput,
@@ -121,7 +124,8 @@ class _StudentFormPageState extends State<StudentFormPage> {
                 ),
                 SizedBox(height: 16.h),
                 Semantics(
-                  label: 'Parent Phone Input Field',
+                  identifier: AdminKeys.studentParentPhoneInputId,
+                  // label: 'Parent Phone Input Field',
                   hint: 'Enter 10 digit phone number',
                   child: TextFormField(
                     key: AdminKeys.studentParentPhoneInput,
@@ -138,7 +142,8 @@ class _StudentFormPageState extends State<StudentFormPage> {
                 ),
                 SizedBox(height: 16.h),
                 Semantics(
-                  label: 'Division Selector',
+                  identifier: AdminKeys.studentGradeInputId,
+                  // label: 'Division Selector',
                   hint: 'Select student division (A, B, or C)',
                   child: DropdownButtonFormField<String>(
                     key: AdminKeys.studentGradeInput,
@@ -165,6 +170,7 @@ class _StudentFormPageState extends State<StudentFormPage> {
                       return const Center(child: CircularProgressIndicator());
                     }
                     return Semantics(
+                      identifier: AdminKeys.saveStudentBtnId,
                       label: isEditing
                           ? 'Update Student Button'
                           : 'Save Student Button',

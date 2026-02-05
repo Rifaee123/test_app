@@ -44,7 +44,11 @@ class AdminHomePage extends StatelessWidget {
                       children: [
                         AdminWelcomeHeader(user: user),
                         SizedBox(height: 6.h),
-                        _buildStatsGrid(state.stats),
+                        Semantics(
+                          identifier: 'admin_stats_grid',
+                          label: 'Administration Statistics Grid',
+                          child: _buildStatsGrid(state.stats),
+                        ),
                         SizedBox(height: 8.h),
                         AdminSectionHeader(
                           testKey: AdminKeys.addStudentBtn,
@@ -128,13 +132,19 @@ class AdminHomePage extends StatelessWidget {
             ],
           ),
         ),
-        title: Text(
-          'ADMIN PORTAL',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w900,
-            fontSize: 9.sp,
-            letterSpacing: 1.5,
+        title: Semantics(
+          identifier: AdminKeys.adminPortalTitle,
+          label: AdminKeys.adminPortalTitle,
+          header: true,
+          child: Text(
+            'ADMIN PORTAL',
+            key: const ValueKey(AdminKeys.adminPortalTitle),
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w900,
+              fontSize: 9.sp,
+              letterSpacing: 1.5,
+            ),
           ),
         ),
         centerTitle: false,
@@ -142,6 +152,7 @@ class AdminHomePage extends StatelessWidget {
       ),
       actions: [
         _AppBarAction(
+          identifier: 'notifications_button',
           label: 'Notifications Button',
           hint: 'View notifications',
           icon: Icons.notifications_rounded,
@@ -149,6 +160,7 @@ class AdminHomePage extends StatelessWidget {
         ),
         _AppBarAction(
           key: const ValueKey(TestIds.logoutButton),
+          identifier: TestIds.logoutButton,
           label: 'Logout Button',
           hint: 'Logout from application',
           icon: Icons.logout_rounded,
@@ -227,12 +239,14 @@ class _AppBarAction extends StatelessWidget {
   final VoidCallback onPressed;
   final String label;
   final String hint;
+  final String? identifier;
 
   const _AppBarAction({
     required this.icon,
     required this.onPressed,
     required this.label,
     required this.hint,
+    this.identifier,
     super.key,
   });
 
@@ -246,6 +260,7 @@ class _AppBarAction extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
         ),
         child: Semantics(
+          identifier: identifier,
           label: label,
           hint: hint,
           button: true,
