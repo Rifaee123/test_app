@@ -25,4 +25,5 @@ class TestIds {
   static const subjectCard = 'subject_card';
   static const attendanceStat = 'attendance_stat';
   static const marksStat = 'marks_stat';
+  static const logoutButton = 'logout_button';
 }
