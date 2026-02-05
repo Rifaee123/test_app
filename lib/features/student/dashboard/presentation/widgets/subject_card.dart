@@ -29,6 +29,7 @@ class SubjectCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Semantics(
+            identifier: TestIds.subjectCard,
             label: TestIds.subjectCard,
             child: Text(
               subject,
@@ -57,6 +58,7 @@ class SubjectCard extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Semantics(
+                identifier: 'subject_status_${subject.toLowerCase()}',
                 label: 'Subject Status',
                 value: 'Active',
                 child: Text(

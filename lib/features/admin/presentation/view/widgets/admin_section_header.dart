@@ -19,14 +19,24 @@ class AdminSectionHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-            fontSize: 10.sp,
+        Semantics(
+          identifier:
+              '${title.toLowerCase().replaceAll(' ', '_')}_section_header',
+          header: true,
+          label: '$title Section Header',
+          child: Text(
+            title,
+            key: ValueKey('${title.toLowerCase().replaceAll(' ', '_')}_header'),
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontSize: 10.sp,
+            ),
           ),
         ),
         Semantics(
+          identifier: testKey is ValueKey<String>
+              ? (testKey as ValueKey<String>).value
+              : null,
           label: 'Add New Student Button',
           button: true,
           hint: 'Navigates to the form to add a new student',

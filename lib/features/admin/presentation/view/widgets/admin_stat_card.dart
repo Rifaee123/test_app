@@ -20,8 +20,10 @@ class AdminStatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      key: testKey,
-      label: '$title statistic: $value',
+      identifier: testKey is ValueKey<String>
+          ? (testKey as ValueKey<String>).value
+          : 'stat_card_${title.toLowerCase().replaceAll(' ', '_')}',
+      label: testKey?.toString() ?? title,
       child: TweenAnimationBuilder<double>(
         duration: const Duration(milliseconds: 600),
         tween: Tween(begin: 0.8, end: 1.0),

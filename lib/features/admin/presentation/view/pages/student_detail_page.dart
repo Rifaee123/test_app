@@ -39,13 +39,22 @@ class _StudentDetailPageState extends State<StudentDetailPage> {
         return Scaffold(
           key: AdminKeys.studentDetailView,
           appBar: AppBar(
-            title: const Text('Student Details'),
+            title: Semantics(
+              identifier: 'student_detail_page_title',
+              label: 'Student Details PageTitle',
+              header: true,
+              child: const Text(
+                'Student Details',
+                key: ValueKey('student_details_page_title'),
+              ),
+            ),
             leading: BackButton(
               key: AdminKeys.backButton,
               onPressed: () => Navigator.pop(context, _hasUpdated),
             ),
             actions: [
               Semantics(
+                identifier: AdminKeys.editStudentBtn(student.id),
                 label: 'Edit Student Button',
                 button: true,
                 hint: 'Navigate to edit student form',
@@ -70,6 +79,7 @@ class _StudentDetailPageState extends State<StudentDetailPage> {
             ],
           ),
           body: Semantics(
+            identifier: 'student_detail_scroll_view',
             label: 'Student detailed information scroll view',
             child: SingleChildScrollView(
               padding: EdgeInsets.all(20.w),
@@ -81,7 +91,7 @@ class _StudentDetailPageState extends State<StudentDetailPage> {
                     const Center(child: CircularProgressIndicator())
                   else
                     Semantics(
-                      key: AdminKeys.studentDetailCard,
+                      identifier: AdminKeys.studentDetailCardId,
                       label: 'Student information list',
                       child: _buildInfoList(context, student),
                     ),
@@ -107,15 +117,25 @@ class _StudentDetailPageState extends State<StudentDetailPage> {
           ),
         ),
         const SizedBox(height: 16),
-        Text(
-          student.name,
-          style: Theme.of(
-            context,
-          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+        Semantics(
+          identifier: AdminKeys.studentNameLabelId,
+          label: 'Student Name: ${student.name}',
+          child: Text(
+            student.name,
+            key: const ValueKey(AdminKeys.studentNameLabelId),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+          ),
         ),
-        Text(
-          'Student ID: ${student.id}',
-          style: const TextStyle(color: AppTheme.softTextColor),
+        Semantics(
+          identifier: AdminKeys.studentEmailLabelId,
+          label: 'Student Email: ${student.email}',
+          child: Text(
+            'Student ID: ${student.id}',
+            key: const ValueKey(AdminKeys.studentEmailLabelId),
+            style: const TextStyle(color: AppTheme.softTextColor),
+          ),
         ),
       ],
     );
@@ -179,6 +199,7 @@ class _InfoTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Semantics(
+      identifier: 'info_tile_${label.toLowerCase().replaceAll(' ', '_')}',
       label: '$label: $value',
       readOnly: true,
       child: Container(

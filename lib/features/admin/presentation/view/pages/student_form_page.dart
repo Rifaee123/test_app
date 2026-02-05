@@ -77,6 +77,7 @@ class _StudentFormPageState extends State<StudentFormPage> {
             child: Column(
               children: [
                 Semantics(
+                  identifier: AdminKeys.studentNameInputId,
                   label: 'Student Name Input Field',
                   hint: 'Enter the full name of the student',
                   child: TextFormField(
@@ -92,6 +93,7 @@ class _StudentFormPageState extends State<StudentFormPage> {
                 ),
                 SizedBox(height: 16.h),
                 Semantics(
+                  identifier: AdminKeys.studentDobInputId,
                   label: 'Date of Birth Input Field',
                   hint: 'Enter date in YYYY-MM-DD format',
                   child: TextFormField(
@@ -106,6 +108,7 @@ class _StudentFormPageState extends State<StudentFormPage> {
                 ),
                 SizedBox(height: 16.h),
                 Semantics(
+                  identifier: AdminKeys.studentParentNameInputId,
                   label: 'Parent Name Input Field',
                   hint: 'Enter the name of the parent',
                   child: TextFormField(
@@ -121,6 +124,7 @@ class _StudentFormPageState extends State<StudentFormPage> {
                 ),
                 SizedBox(height: 16.h),
                 Semantics(
+                  identifier: AdminKeys.studentParentPhoneInputId,
                   label: 'Parent Phone Input Field',
                   hint: 'Enter 10 digit phone number',
                   child: TextFormField(
@@ -138,6 +142,7 @@ class _StudentFormPageState extends State<StudentFormPage> {
                 ),
                 SizedBox(height: 16.h),
                 Semantics(
+                  identifier: AdminKeys.studentGradeInputId,
                   label: 'Division Selector',
                   hint: 'Select student division (A, B, or C)',
                   child: DropdownButtonFormField<String>(
@@ -165,6 +170,7 @@ class _StudentFormPageState extends State<StudentFormPage> {
                       return const Center(child: CircularProgressIndicator());
                     }
                     return Semantics(
+                      identifier: AdminKeys.saveStudentBtnId,
                       label: isEditing
                           ? 'Update Student Button'
                           : 'Save Student Button',
