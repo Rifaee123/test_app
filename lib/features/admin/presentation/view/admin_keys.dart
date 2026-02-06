@@ -5,6 +5,7 @@ class AdminKeys {
   static const String adminHomeViewId = 'admin_home_view';
   static const String studentFormViewId = 'student_form_view';
   static const String studentDetailViewId = 'student_detail_view';
+  static const String studentLists = 'studentLists';
 
   // Pages (Legacy Keys)
   static const Key adminHomeView = ValueKey(adminHomeViewId);

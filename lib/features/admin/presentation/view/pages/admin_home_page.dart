@@ -75,11 +75,14 @@ class AdminHomePage extends StatelessWidget {
                   padding: EdgeInsets.symmetric(
                     horizontal: context.adaptiveWidth(6),
                   ),
-                  sliver: SliverList(
-                    key: AdminKeys.studentList,
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      return AdminStudentCard(student: students[index]);
-                    }, childCount: students.length),
+                  sliver: SliverSemantics(
+                    identifier: AdminKeys.studentLists,
+                    sliver: SliverList(
+                      key: AdminKeys.studentList,
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        return AdminStudentCard(student: students[index]);
+                      }, childCount: students.length),
+                    ),
                   ),
                 ),
                 SliverToBoxAdapter(child: SizedBox(height: 8.h)),
