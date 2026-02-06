@@ -49,27 +49,14 @@ class LandingPage extends StatelessWidget {
                 child: const Text('Login as Student'),
               ),
               const SizedBox(height: 16),
-              OutlinedButton(
+              ElevatedButton(
                 key: AuthKeys.registerButton,
                 onPressed: () {
                   context.read<AuthBloc>().add(
                     const NavigateToLoginRequested(isAdmin: true),
                   );
                 },
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 56),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  side: BorderSide(color: Theme.of(context).primaryColor),
-                ),
-                child: Text(
-                  'Login as Admin',
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                child: const Text('Login as Admin'),
               ),
             ],
           ),
